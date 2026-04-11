@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4 py-md-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <h1 class="fw-800 mb-0 text-gradient">Dining</h1>
+        <form method="get" action="{% url 'restaurant_list' %}" class="d-flex" style="max-width: 500px; width: 100%;">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden">
+                <input type="text" name="q" class="form-control border-0 ps-4" placeholder="Search restaurants..." value="{{ query|default:'' }}">
+                <button type="submit" class="btn btn-premium px-4">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="responsive-grid">
+        {% for restaurant in restaurants %}
+        <div class="glass-card">
+            {% if restaurant.image %}
+            <img src="{{ restaurant.image.url }}" class="card-img-top" alt="{{ restaurant.name }}">
+            {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 200px;">
+                <i class="bi bi-shop fs-1"></i>
+            </div>
+            {% endif %}
+            <div class="card-body p-4 d-flex flex-column">
+                <h6 class="fw-bold mb-1 text-truncate">{{ restaurant.name }}</h6>
+                <p class="small text-muted mb-2 text-truncate">{{ restaurant.address }}</p>
+                <div class="d-flex align-items-center gap-1 text-warning mb-3">
+                    <i class="bi bi-star-fill small"></i>
+                    <span class="small fw-bold text-dark">{{ restaurant.rating }}</span>
+                </div>
+                <a href="{% url 'restaurant_detail' restaurant.pk %}" class="btn btn-premium btn-sm mt-auto">Menu</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5 w-100 grid-span-full">
+            <p class="text-muted">No restaurants available at the moment.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

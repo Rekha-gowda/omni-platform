@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4 py-md-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-800 mb-0 text-gradient">Shopping</h1>
+    </div>
+
+    <!-- Mobile Search -->
+    <div class="d-md-none mb-4">
+        <form method="get" action="{% url 'product_list' %}" class="position-relative">
+            <input type="text" name="q" class="form-control rounded-pill ps-4 border-0 shadow-sm py-3" placeholder="Search products..." value="{{ query|default:'' }}">
+            <button type="submit" class="btn btn-premium rounded-pill position-absolute end-0 top-0 h-100 px-4">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+    </div>
+
+    <div class="row align-items-center mb-5 g-4">
+        <div class="col-md-8 d-flex flex-wrap gap-2">
+            <a href="{% url 'product_list' %}" class="btn {% if not selected_category %}btn-premium{% else %}btn-outline-dark{% endif %} rounded-pill px-4 btn-sm">All</a>
+            {% for cat in categories %}
+            <a href="{% url 'product_list' %}?category={{ cat.key }}" class="btn {% if selected_category == cat.key %}btn-premium{% else %}btn-outline-dark{% endif %} rounded-pill px-4 btn-sm">{{ cat.label }}</a>
+            {% endfor %}
+        </div>
+        <div class="col-md-4 d-none d-md-block">
+            <form method="get" action="{% url 'product_list' %}" class="d-flex">
+                <input type="text" name="q" class="form-control rounded-pill me-2 border-0 shadow-sm ps-4" placeholder="Search products..." value="{{ query|default:'' }}">
+                <button type="submit" class="btn btn-premium rounded-pill px-4">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="responsive-grid">
+        {% for product in products %}
+        <div class="glass-card">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 200px;">
+                <i class="bi bi-image fs-1"></i>
+            </div>
+            {% endif %}
+            <div class="card-body p-4 d-flex flex-column">
+                <h6 class="fw-bold mb-1 text-truncate">{{ product.name }}</h6>
+                <p class="small text-accent fw-bold mb-3">₹{{ product.price }}</p>
+                <div class="mt-auto">
+                    <a href="{% url 'product_detail' product.pk %}" class="btn btn-outline-dark btn-sm rounded-pill w-100 mb-2">Details</a>
+                    {% if "clothing_" in product.category %}
+                    <form method="post" action="{% url 'add_to_cart' product.pk %}" class="d-flex gap-2">
+                        {% csrf_token %}
+                        <select name="size" class="form-select form-select-sm rounded-pill py-2" style="width: 70px;" required>
+                            <option value="" selected disabled>Size</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                        </select>
+                        <button type="submit" class="btn btn-premium btn-sm rounded-pill flex-grow-1"><i class="bi bi-cart-plus"></i></button>
+                    </form>
+                    {% else %}
+                    <a href="{% url 'add_to_cart' product.pk %}" class="btn btn-premium btn-sm rounded-pill w-100">Add to Cart</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5 w-100 grid-span-full">
+            <p class="text-muted">No products available at the moment.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

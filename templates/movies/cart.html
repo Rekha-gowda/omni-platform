@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <h1 class="fw-bold mb-4 text-warning border-bottom pb-2">Your Movie Cart</h1>
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="glass-card bg-dark text-white p-4 border-warning">
+                {% for item in cart.items.all %}
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom border-secondary">
+                    <div>
+                        <h5 class="mb-0 fw-bold text-warning">{{ item.seat.show.movie.title }}</h5>
+                        <p class="text-muted mb-0">Seat: {{ item.seat.seat_identifier }} &bull; {{ item.seat.show.theater_name }}</p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <h5 class="text-success mb-0 fw-bold me-4">₹{{ item.seat.show.price }}</h5>
+                        <form method="post" action="{% url 'movie_remove_from_cart' item.id %}" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                        </form>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center my-4">Your movie cart is empty.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="glass-card bg-warning text-dark p-4">
+                <h4 class="fw-bold mb-4">Order Summary</h4>
+                <div class="d-flex justify-content-between mb-4 pb-3 border-bottom border-dark">
+                    <span>Total Tickets</span>
+                    <span class="fw-bold">{{ cart.items.count }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-4">
+                    <h5 class="fw-bold mb-0">Total</h5>
+                    <h5 class="fw-bold mb-0">₹{{ cart.get_total }}</h5>
+                </div>
+                {% if cart.items.exists %}
+                <form method="post" action="{% url 'checkout_movie_cart' %}">
+                    {% csrf_token %}
+                    <div class="mb-3 text-start">
+                        <label for="customer_name" class="form-label mb-1">Full Name</label>
+                        <input type="text" name="customer_name" id="customer_name" class="form-control form-control-sm" required>
+                    </div>
+                    <div class="mb-3 text-start">
+                        <label for="customer_email" class="form-label mb-1">Email</label>
+                        <input type="email" name="customer_email" id="customer_email" class="form-control form-control-sm" required>
+                    </div>
+                    <div class="mb-4 text-start">
+                        <label for="customer_phone" class="form-label mb-1">Phone Number</label>
+                        <input type="tel" name="customer_phone" id="customer_phone" class="form-control form-control-sm" required>
+                    </div>
+                    <!-- Payment Method Selection -->
+                    <div class="mb-4 text-start">
+                        <label class="form-label mb-2 fw-bold">Payment Method</label>
+                        <div class="d-grid gap-2">
+                            <input type="radio" class="btn-check" name="payment_method" id="pay_cod" value="COD" checked onchange="toggleUPI(false)">
+                            <label class="btn btn-outline-dark w-100 rounded-pill" for="pay_cod">COD (Pay at Theater)</label>
+                            
+                            <input type="radio" class="btn-check" name="payment_method" id="pay_upi" value="UPI" onchange="toggleUPI(true)">
+                            <label class="btn btn-outline-primary w-100 rounded-pill" for="pay_upi">UPI</label>
+                        </div>
+                    </div>
+
+                    <!-- UPI Payment Prompt -->
+                    <div id="upi_prompt" class="alert alert-primary d-none mb-4">
+                        <p class="mb-2 fw-bold text-center">📲 Pay to: <span class="text-primary fs-5">6303201086</span></p>
+                        <div class="form-check text-center">
+                            <input class="form-check-input d-inline-block float-none" type="checkbox" id="payment_done">
+                            <label class="form-check-label text-dark" for="payment_done">I have completed the payment</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submit_btn" class="btn btn-dark w-100 rounded-pill py-3 fw-bold fs-5">Confirm Booking</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleUPI(show) {
+        const prompt = document.getElementById('upi_prompt');
+        const submitBtn = document.getElementById('submit_btn');
+        if (show) {
+            prompt.classList.remove('d-none');
+            submitBtn.innerText = "Complete Payment & Confirm";
+            submitBtn.classList.replace('btn-dark', 'btn-primary');
+            submitBtn.onclick = function(e) {
+                if (!document.getElementById('payment_done').checked) {
+                    alert("Please complete the payment first!");
+                    e.preventDefault();
+                }
+            };
+        } else {
+            prompt.classList.add('d-none');
+            submitBtn.innerText = "Confirm Booking";
+            submitBtn.classList.replace('btn-primary', 'btn-dark');
+            submitBtn.onclick = null;
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>My Food Orders</h2>
+    {% if orders %}
+        <div class="list-group mt-3">
+            {% for order in orders %}
+            <div class="list-group-item mb-3 shadow-sm rounded">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">Order #{{ order.id }} - {{ order.restaurant.name }}</h5>
+                    <span class="badge {% if order.is_delivered %}bg-success{% else %}bg-warning text-dark{% endif %} fs-6">{{ order.status }}</span>
+                </div>
+                <p class="mb-1 text-muted"><strong>Ordered:</strong> {{ order.created_at|date:"M d, Y H:i" }}</p>
+                <p class="mb-1 text-muted"><strong>Total:</strong> ₹{{ order.total_amount }}</p>
+                
+                <hr>
+                
+                {% if order.is_delivered %}
+                    {% if order.show_no_return_warning %}
+                    <div class="my-3 p-3 bg-light rounded border border-danger text-center">
+                        <h6 class="text-danger fw-bold m-0">No Returns Allowed for Foods.</h6>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    {% if order.can_complain %}
+                    <div class="my-3 p-3 bg-light rounded border border-danger text-center">
+                        {% if order.has_complaint %}
+                        <p class="text-danger small mt-2">Complaint Raised. Support will reach out soon.</p>
+                        {% else %}
+                        <p class="mb-2 mt-2">Received wrong or damaged food? Raise a complaint below or call <strong>Customer Care: 6303201086</strong>.</p>
+                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="collapse" data-bs-target="#complaintForm-{{ order.id }}">Raise Complaint</button>
+                        
+                        <div class="collapse mt-2" id="complaintForm-{{ order.id }}">
+                            <form method="post" action="{% url 'submit_food_complaint' order.id %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="mb-2 text-start">
+                                    <label class="form-label">Issue Reason</label>
+                                    <textarea name="reason_text" class="form-control form-control-sm" rows="2" required></textarea>
+                                </div>
+                                <div class="mb-2 text-start">
+                                    <label class="form-label">Upload Image Proof</label>
+                                    <input type="file" name="image" class="form-control form-control-sm" accept="image/*" required>
+                                </div>
+                                <button type="submit" class="btn btn-danger btn-sm">Submit Complaint</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                    {% if order.can_review and not order.has_review %}
+                    <div class="my-3 p-3 bg-light rounded border border-primary">
+                        <h6 class="text-primary fw-bold">Rate Your Experience</h6>
+                        <button class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#reviewForm-{{ order.id }}">Write a Review</button>
+                        
+                        <div class="collapse mt-2" id="reviewForm-{{ order.id }}">
+                            <form method="post" action="{% url 'submit_food_review' order.restaurant.id %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="order_id" value="{{ order.id }}">
+                                <div class="mb-2">
+                                    <label class="form-label">Rating (1-5 Stars)</label>
+                                    <input type="number" name="rating" class="form-control form-control-sm" min="1" max="5" value="5" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Review</label>
+                                    <textarea name="review_text" class="form-control form-control-sm" rows="2" required></textarea>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Upload Picture (Optional)</label>
+                                    <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">Submit Review</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
+                
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-3">You have no food orders yet.</div>
+    {% endif %}
+    
+    <a href="{% url 'restaurant_list' %}" class="btn btn-primary mt-3">Order More Food</a>
+</div>
+{% endblock %}

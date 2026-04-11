@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5 d-flex flex-column align-items-center justify-content-center" style="min-height: 60vh;">
+    <div class="glass-card text-center border-success" style="width: 100%; max-width: 600px;">
+        <div class="display-1 text-success mb-3">✅</div>
+        <h1 class="fw-bold text-success mb-3">Payment Successful!</h1>
+        <div class="alert alert-success my-4">
+            <h5 class="fw-bold mb-3">Transaction Details:</h5>
+            <p class="mb-1"><strong>Service:</strong> {{ module }}</p>
+            <p class="mb-1"><strong>Amount Paid:</strong> ₹{{ amount }}</p>
+            {% if ref %}
+            <p class="mb-0"><strong>Reference:</strong> {{ ref }}</p>
+            {% endif %}
+        </div>
+        <p class="text-muted mb-4">Your order/booking has been confirmed. You can view it in your history.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">Return Home</a>
+            {% if request.GET.module in 'Movies,Travellers' %}
+            <a href="{% url 'download_ticket_pdf' %}?module={{ request.GET.module }}&ref={{ request.GET.ref }}" class="btn btn-primary rounded-pill px-4 fw-bold">Download PDF Ticket</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

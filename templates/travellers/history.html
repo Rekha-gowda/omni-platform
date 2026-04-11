@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>My Bus Bookings</h2>
+    {% if bookings %}
+        <div class="table-responsive">
+            <table class="table table-hover mt-3">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Bus</th>
+                        <th>Route</th>
+                        <th>Departure</th>
+                        <th>Seats</th>
+                        <th>Cost</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td class="small text-muted">#{{ booking.id }}</td>
+                        <td class="fw-bold text-primary">{{ booking.trip.bus.name }}</td>
+                        <td>
+                            <div class="small fw-semibold">{{ booking.trip.source }}</div>
+                            <div class="text-muted small">to {{ booking.trip.destination }}</div>
+                        </td>
+                        <td>
+                            <div class="small">{{ booking.trip.departure_date|date:"M d, Y" }}</div>
+                            <small class="badge bg-light text-dark">{{ booking.trip.timing_shift }}</small>
+                        </td>
+                        <td><span class="badge border text-dark">{{ booking.no_of_seats }}</span></td>
+                        <td class="fw-bold">₹{{ booking.total_cost }}</td>
+                        <td>
+                            <a href="{% url 'download_bus_ticket_pdf' booking.id %}" class="btn btn-sm btn-success rounded-pill px-3">
+                                <i class="bi bi-download"></i> PDF
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-3">You have no bus bookings yet.</div>
+    {% endif %}
+    
+    <a href="{% url 'bus_list' %}" class="btn btn-primary mt-3">Book a Bus</a>
+</div>
+{% endblock %}

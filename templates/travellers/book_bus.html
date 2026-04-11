@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container d-flex align-items-center justify-content-center py-5">
+    <div class="glass-card border-success" style="width: 100%; max-width: 600px;">
+        <h2 class="fw-bold mb-4 text-success">Select Bus Seats</h2>
+        {% if trip.bus.image %}
+        <div class="mb-4">
+            <img src="{{ trip.bus.image.url }}" class="img-fluid rounded border border-success" alt="{{ trip.bus.name }}" style="max-height: 300px; width: 100%; object-fit: cover;">
+        </div>
+        {% endif %}
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-1 fw-bold">{{ trip.bus.name }}</h5>
+                <span class="badge bg-success">⭐ {{ trip.bus.rating }}</span>
+            </div>
+            <p class="mb-1 text-muted">{{ trip.source }} &rarr; {{ trip.destination }} | {{ trip.departure_date }} ({{ trip.timing_shift }})</p>
+            <p class="text-success fw-bold mb-0">₹{{ trip.price_per_seat }} per seat</p>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="d-flex flex-wrap gap-2 justify-content-center mb-4 border-bottom border-success pb-4">
+                {% for seat in seats %}
+                <div>
+                    <input type="checkbox" class="btn-check" name="seats" id="seat{{ seat.id }}" value="{{ seat.id }}" autocomplete="off" {% if seat.is_locked %}disabled{% endif %}>
+                    <label class="btn {% if seat.is_locked %}btn-secondary{% else %}btn-outline-success{% endif %} px-2 py-1" for="seat{{ seat.id }}" style="width: 50px;">{{ seat.seat_identifier }}</label>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <h4 class="fw-bold mb-3 text-success">Passenger Details</h4>
+            <div class="mb-3 text-start">
+                <label for="customer_name" class="form-label">Full Name</label>
+                <input type="text" name="customer_name" id="customer_name" class="form-control" required>
+            </div>
+            <div class="mb-3 text-start">
+                <label for="customer_email" class="form-label">Email</label>
+                <input type="email" name="customer_email" id="customer_email" class="form-control" required>
+            </div>
+            <div class="mb-4 text-start">
+                <label for="customer_phone" class="form-label">Phone Number</label>
+                <input type="tel" name="customer_phone" id="customer_phone" class="form-control" required>
+            </div>
+            
+            <!-- Payment Method Selection -->
+            <div class="mb-4">
+                <label class="form-label fw-bold">Payment Method</label>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <input type="radio" class="btn-check" name="payment_method" id="pay_cod" value="COD" checked onchange="toggleUPI(false)">
+                        <label class="btn btn-outline-secondary w-100 rounded-pill" for="pay_cod">COD (Pay at Bus)</label>
+                    </div>
+                    <div class="col-6">
+                        <input type="radio" class="btn-check" name="payment_method" id="pay_upi" value="UPI" onchange="toggleUPI(true)">
+                        <label class="btn btn-outline-primary w-100 rounded-pill" for="pay_upi">UPI</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UPI Payment Prompt -->
+            <div id="upi_prompt" class="alert alert-primary d-none">
+                <p class="mb-2 fw-bold text-center">📲 Pay to: <span class="text-primary fs-5">6303201086</span></p>
+                <div class="form-check text-center">
+                    <input class="form-check-input d-inline-block float-none" type="checkbox" id="payment_done">
+                    <label class="form-check-label" for="payment_done">I have completed the payment</label>
+                </div>
+            </div>
+
+            <button type="submit" id="submit_btn" class="btn btn-primary w-100 rounded-pill py-3 fw-bold fs-5 shadow-sm">Confirm Booking & Pay</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleUPI(show) {
+        const prompt = document.getElementById('upi_prompt');
+        const submitBtn = document.getElementById('submit_btn');
+        if (show) {
+            prompt.classList.remove('d-none');
+            submitBtn.innerText = "Complete Payment & Confirm";
+            submitBtn.onclick = function(e) {
+                if (!document.getElementById('payment_done').checked) {
+                    alert("Please complete the payment first!");
+                    e.preventDefault();
+                }
+            };
+        } else {
+            prompt.classList.add('d-none');
+            submitBtn.innerText = "Confirm Booking & Pay";
+            submitBtn.onclick = null;
+        }
+    }
+</script>
+{% endblock %}

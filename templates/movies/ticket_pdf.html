@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Movie Ticket {{ ticket.id }}</title>
+    <style>
+        body { font-family: Helvetica, sans-serif; color: #333; }
+        .ticket-box { border: 2px dashed #333; padding: 20px; width: 100%; border-radius: 10px; }
+        h1 { color: #e52e71; margin-top: 0; }
+        .info { margin-bottom: 10px; font-size: 16px; }
+        .info strong { display: inline-block; width: 120px; }
+        .qr { margin-top: 30px; text-align: center; color: #777; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="ticket-box">
+        <h1>Omni Platform - Movie Ticket</h1>
+        <hr>
+        <div class="info"><strong>Ticket ID:</strong> {{ ticket.id }}</div>
+        <div class="info"><strong>User:</strong> {{ ticket.user.username }}</div>
+        <div class="info"><strong>Movie:</strong> {{ ticket.show.movie.title }}</div>
+        <div class="info"><strong>Theater:</strong> {{ ticket.show.theater_name }}</div>
+        <div class="info"><strong>Show Time:</strong> {{ ticket.show.show_time|date:"Y-m-d H:i" }}</div>
+        <div class="info"><strong>Seats Booked:</strong> {{ ticket.seats }}</div>
+        <div class="info"><strong>Total Price:</strong> ₹{{ ticket.total_price }}</div>
+        
+        <div class="qr">
+            [ QR Code Placeholder ]<br>
+            Please present this ticket at the entrance.
+        </div>
+    </div>
+</body>
+</html>

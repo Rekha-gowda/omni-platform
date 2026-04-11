@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="glass-card">
+        <div class="row">
+            <div class="col-md-6 mb-4 mb-md-0">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+                {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center h-100 rounded" style="min-height: 300px;">No Image</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6 d-flex flex-column justify-content-center">
+                <h1 class="fw-bold text-primary">{{ product.name }}</h1>
+                <h3 class="text-success mb-4">₹{{ product.price }}</h3>
+                <p class="lead">{{ product.description }}</p>
+                <p class="text-muted"><strong>Stock Available:</strong> {{ product.stock }}</p>
+                <div class="mt-4 d-flex gap-2 flex-wrap">
+                    <a href="{% url 'buy_product' product.pk %}" class="btn btn-lg btn-primary rounded-pill px-5">Buy Now</a>
+                    {% if "clothing_" in product.category %}
+                    <form method="post" action="{% url 'add_to_cart' product.pk %}" class="d-flex gap-2">
+                        {% csrf_token %}
+                        <select name="size" class="form-select w-auto rounded-pill" required>
+                            <option value="" selected disabled>Select Size</option>
+                            {% if product.category == 'clothing_kids' %}
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            {% else %}
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                            {% endif %}
+                        </select>
+                        <button type="submit" class="btn btn-lg btn-info text-white rounded-pill px-4">Add to Cart</button>
+                    </form>
+                    {% else %}
+                    <a href="{% url 'add_to_cart' product.pk %}" class="btn btn-lg btn-info text-white rounded-pill px-4">Add to Cart</a>
+                    {% endif %}
+                    <a href="{% url 'product_list' %}" class="btn btn-lg btn-outline-secondary rounded-pill px-4">Back</a>
+                </div>
+            </div>
+        </div>
+        <!-- Related Products Section (Scroll Reveal) -->
+        {% if related_products %}
+        <div class="mt-5 border-top pt-4">
+            <h3 class="text-primary fw-bold mb-4">Related Products</h3>
+            <div class="row g-4">
+                {% for related in related_products %}
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="card h-100 shadow-sm border-info">
+                        {% if related.image %}
+                        <img src="{{ related.image.url }}" class="card-img-top" alt="{{ related.name }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">No Image</div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold text-truncate">{{ related.name }}</h5>
+                            <p class="text-success mb-2">₹{{ related.price }}</p>
+                            <a href="{% url 'product_detail' related.pk %}" class="btn btn-sm btn-outline-info mt-auto rounded-pill">View</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+    </div>
+</div>
+{% endblock %}

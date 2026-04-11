@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="glass-card border-danger mb-5">
+        <h1 class="fw-bold text-danger">{{ restaurant.name }}</h1>
+        <p class="lead text-muted">{{ restaurant.address }}</p>
+        <p class="text-warning fw-bold">&starf; {{ restaurant.rating }} / 5.0</p>
+    </div>
+
+    <h3 class="fw-bold mb-4 border-bottom pb-2">Menu</h3>
+    <div class="row g-4">
+        {% for item in restaurant.menu.all %}
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="row g-0">
+                    <div class="col-4">
+                        {% if item.image %}
+                        <img src="{{ item.image.url }}" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="{{ item.name }}">
+                        {% else %}
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center h-100 rounded-start">No Image</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-8">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">{{ item.name }}</h5>
+                            <p class="card-text text-muted small">{{ item.description }}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="text-success fw-bold">₹{{ item.price }}</span>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'order_food' item.pk %}" class="btn btn-sm btn-danger rounded-pill px-3">Order</a>
+                                    <a href="{% url 'food_add_to_cart' item.pk %}" class="btn btn-sm btn-outline-danger rounded-pill px-3">Add to Cart</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12"><p class="text-muted">Menu is currently empty.</p></div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

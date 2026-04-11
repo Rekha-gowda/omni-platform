@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="glass-card bg-dark text-white border-warning mb-5">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                {% if movie.image %}
+                <img src="{{ movie.image.url }}" class="img-fluid rounded" alt="{{ movie.title }}">
+                {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center h-100 rounded" style="min-height: 400px;">No Poster</div>
+                {% endif %}
+            </div>
+            <div class="col-md-8 d-flex flex-column justify-content-center">
+                <h1 class="fw-bold text-warning">{{ movie.title }}</h1>
+                <p class="text-muted mb-2">{{ movie.release_date|date:"M d, Y" }} &bull; {{ movie.genre }} &bull; {{ movie.duration_minutes }} min</p>
+                <p class="lead mt-3">{{ movie.description }}</p>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="fw-bold mb-4 border-bottom pb-2">Available Shows</h3>
+    <div class="row g-4">
+        {% for show in movie.shows.all %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-warning">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">{{ show.theater_name }}</h5>
+                    <p class="text-muted mb-2">{{ show.show_time|date:"D, M d - h:i A" }}</p>
+                    <p class="text-success fw-bold mb-3">₹{{ show.price }}</p>
+                    <a href="{% url 'book_ticket' show.pk %}" class="btn btn-outline-warning w-100 rounded-pill fw-bold">Book Ticket</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12"><p class="text-muted">No shows available for this movie.</p></div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

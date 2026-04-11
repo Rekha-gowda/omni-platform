@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold m-0"><i class="bi bi-clock-history me-2"></i>Activity History</h2>
+    </div>
+
+    {% if not activities %}
+        <div class="glass-card p-5 text-center">
+            <i class="bi bi-calendar2-x display-1 text-muted mb-3 d-block"></i>
+            <h3>No activities yet</h3>
+            <p class="text-muted">Explore our services to see your history here!</p>
+            <div class="d-flex gap-2 justify-content-center mt-4">
+                <a href="{% url 'product_list' %}" class="btn btn-outline-primary">Shop</a>
+                <a href="{% url 'bus_list' %}" class="btn btn-outline-primary">Travel</a>
+                <a href="{% url 'restaurant_list' %}" class="btn btn-outline-primary">Order Food</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="activity-feed">
+            {% for activity in activities %}
+                <div class="glass-card mb-3 border-0 overflow-hidden">
+                    <div class="p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                {% if activity.type == 'shopping' %}
+                                    <span class="badge bg-primary mb-2"><i class="bi bi-bag-check me-1"></i> Shopping Order</span>
+                                    <h5 class="mb-1">Order #{{ activity.id }}</h5>
+                                    <p class="text-muted small mb-0">Products: {{ activity.items.count }} items</p>
+                                {% elif activity.type == 'food' %}
+                                    <span class="badge bg-danger mb-2"><i class="bi bi-egg-fried me-1"></i> Food Delivery</span>
+                                    <h5 class="mb-1">{{ activity.restaurant.name }}</h5>
+                                    <p class="text-muted small mb-0">Status: {{ activity.status }}</p>
+                                {% elif activity.type == 'movie' %}
+                                    <span class="badge bg-warning text-dark mb-2"><i class="bi bi-ticket-perforated me-1"></i> Movie Ticket</span>
+                                    <h5 class="mb-1">{{ activity.show.movie.title }}</h5>
+                                    <p class="text-muted small mb-0">{{ activity.show.theater_name }} | {{ activity.show.show_time|date:"D, d M Y" }}</p>
+                                {% elif activity.type == 'bus' %}
+                                    <span class="badge bg-success mb-2"><i class="bi bi-bus-front me-1"></i> Bus Booking</span>
+                                    <h5 class="mb-1">{{ activity.trip.bus.name }}</h5>
+                                    <p class="text-muted small mb-0">{{ activity.trip.source }} to {{ activity.trip.destination }} | {{ activity.trip.departure_date }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold text-accent h5 mb-1">₹{{ activity.total_amount|default:activity.total_price|default:activity.total_cost }}</div>
+                                <div class="text-muted x-small">{{ activity.timestamp|date:"d M, Y h:i A" }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            {% if activity.type == 'shopping' %}
+                                <a href="{% url 'order_history' %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+                            {% elif activity.type == 'food' %}
+                                <a href="{% url 'foods_history' %}" class="btn btn-sm btn-outline-secondary">Track Order</a>
+                            {% elif activity.type == 'movie' %}
+                                <a href="{% url 'ticket_history' %}" class="btn btn-sm btn-outline-secondary">View Ticket</a>
+                            {% elif activity.type == 'bus' %}
+                                <a href="{% url 'booking_history' %}" class="btn btn-sm btn-outline-secondary">View Ticket</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .activity-feed .glass-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-left: 4px solid var(--accent-color) !important;
+    }
+    .activity-feed .glass-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    .x-small {
+        font-size: 0.75rem;
+    }
+</style>
+{% endblock %}

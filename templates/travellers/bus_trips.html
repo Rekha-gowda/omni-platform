@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'bus_list' %}">Buses</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ bus.name }} - Trips</li>
+        </ol>
+    </nav>
+
+    <div class="row align-items-center mb-5">
+        <div class="col-md-2 text-center">
+            {% if bus.image %}
+            <img src="{{ bus.image.url }}" class="rounded-circle shadow" style="width: 120px; height: 120px; object-fit: cover;">
+            {% else %}
+            <div class="bg-primary rounded-circle shadow d-flex align-items-center justify-content-center text-white mx-auto" style="width: 120px; height: 120px;">
+                <i class="fas fa-bus fa-3x"></i>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-10">
+            <h1 class="fw-bold mb-2">{{ bus.name }}</h1>
+            <div>
+                <span class="badge bg-warning text-dark fs-6"><i class="fas fa-star me-1"></i>{{ bus.rating }}</span>
+                <span class="ms-3 text-muted">Available Trips & Schedules</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for trip in trips %}
+        <div class="col-md-6 mb-4">
+            <div class="glass-card shadow-sm border-start border-primary border-4 p-4">
+                <div class="row align-items-center">
+                    <div class="col-sm-8">
+                        <h4 class="fw-bold mb-1 text-primary">{{ trip.source }} <i class="fas fa-long-arrow-alt-right mx-2"></i> {{ trip.destination }}</h4>
+                        <div class="mb-3">
+                            <span class="me-3 text-muted"><i class="fas fa-calendar-alt me-1"></i>{{ trip.departure_date|date:"D, M d, Y" }}</span>
+                            <span class="text-muted"><i class="fas fa-clock me-1"></i>{{ trip.timing_shift }}</span>
+                        </div>
+                        <p class="mb-0 text-success fw-bold fs-4">₹{{ trip.price_per_seat }} <span class="text-muted fs-6 fw-normal">per seat</span></p>
+                    </div>
+                    <div class="col-sm-4 text-sm-end mt-3 mt-sm-0">
+                        <a href="{% url 'book_bus' trip.id %}" class="btn btn-primary rounded-pill px-4 py-2 fw-bold">Select Seats</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted fs-5">No active trips scheduled for this bus today.</p>
+            <a href="{% url 'bus_list' %}" class="btn btn-outline-primary mt-3">Back to All Buses</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

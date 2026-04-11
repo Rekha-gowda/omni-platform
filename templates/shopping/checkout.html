@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <h1 class="fw-bold mb-4 text-primary border-bottom pb-2">Shopping Checkout</h1>
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="glass-card p-4">
+                <h4 class="fw-bold mb-4">Delivery Details</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="delivery_name" class="form-label">Full Name</label>
+                        <input type="text" name="delivery_name" id="delivery_name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="delivery_phone" class="form-label">Phone Number</label>
+                        <input type="tel" name="delivery_phone" id="delivery_phone" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="delivery_address" class="form-label">Delivery Address</label>
+                        <div class="input-group mb-2">
+                            <select class="form-select form-select-sm" id="location_preset" onchange="document.getElementById('delivery_address').value = this.value">
+                                <option value="" selected disabled>-- Select Quick Location --</option>
+                                {% for addr in previous_addresses %}
+                                <option value="{{ addr }}">{{ addr }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" class="btn btn-outline-success btn-sm" onclick="getLocation()">📍 Use Current Location</button>
+                        </div>
+                        <textarea name="delivery_address" id="delivery_address" class="form-control" rows="3" required placeholder="Enter full address..."></textarea>
+                    </div>
+                    <script>
+                        function getLocation() {
+                            const addrField = document.getElementById('delivery_address');
+                            if (navigator.geolocation) {
+                                addrField.placeholder = "Locating your current address...";
+                                navigator.geolocation.getCurrentPosition(
+                                    (position) => {
+                                        const lat = position.coords.latitude;
+                                        const lon = position.coords.longitude;
+                                        // Nominatim reverse geocoding with more detail
+                                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`)
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                const addr = data.address;
+                                                const parts = [
+                                                    addr.house_number || "",
+                                                    addr.road || addr.suburb || addr.neighbourhood || "",
+                                                    addr.city_district || addr.mandal || addr.town || "",
+                                                    addr.city || addr.state_district || "",
+                                                    addr.state || "",
+                                                    addr.postcode || ""
+                                                ].filter(part => part.trim() !== "");
+                                                
+                                                if (parts.length > 0) {
+                                                    addrField.value = parts.join(', ');
+                                                } else {
+                                                    addrField.value = data.display_name || `Location: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                                                }
+                                                addrField.placeholder = "Enter full address...";
+                                            })
+                                            .catch(err => {
+                                                addrField.value = `Location: ${lat.toFixed(4)}, ${lon.toFixed(4)} (Approx Address Needed)`;
+                                                addrField.placeholder = "Enter full address...";
+                                            });
+                                    },
+                                    (error) => {
+                                        alert("Error getting location: " + error.message + ". Please enter address manually.");
+                                        addrField.placeholder = "Enter full address...";
+                                    },
+                                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                                );
+                            } else {
+                                alert("Geolocation is not supported by this browser.");
+                            }
+                        }
+                    </script>
+                    <!-- Fast Delivery Option -->
+                    <div class="form-check mb-4 p-3 border rounded bg-light">
+                        <input class="form-check-input ms-0 me-2" type="checkbox" name="is_fast_delivery" id="is_fast_delivery" onchange="updateTotal()">
+                        <label class="form-check-label fw-bold" for="is_fast_delivery">
+                            🚀 Fast Delivery (3 Days) — <span class="text-primary">₹50 extra</span>
+                        </label>
+                    </div>
+
+                    <!-- Payment Method Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Payment Method</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="payment_method" id="pay_cod" value="COD" checked onchange="toggleUPI(false)">
+                                <label class="btn btn-outline-secondary w-100 rounded-pill" for="pay_cod">COD</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="payment_method" id="pay_upi" value="UPI" onchange="toggleUPI(true)">
+                                <label class="btn btn-outline-primary w-100 rounded-pill" for="pay_upi">UPI Only</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UPI Payment Prompt -->
+                    <div id="upi_prompt" class="alert alert-primary d-none">
+                        <p class="mb-2 fw-bold text-center">📲 Pay to: <span class="text-primary fs-5">6303201086</span></p>
+                        <div class="form-check text-center">
+                            <input class="form-check-input d-inline-block float-none" type="checkbox" id="payment_done">
+                            <label class="form-check-label" for="payment_done">I have completed the payment</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submit_btn" class="btn btn-primary w-100 rounded-pill py-3 fw-bold fs-5 mt-4">Confirm Order & Pay - ₹<span id="display_total">{{ cart.get_total }}</span></button>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="glass-card bg-light p-4">
+                <h4 class="fw-bold mb-4">Order Summary</h4>
+                {% for item in cart.items.all %}
+                <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+                    <span>{{ item.quantity }}x {{ item.product.name }}{% if item.size %} (Size: {{ item.size }}){% endif %}</span>
+                    <span>₹{% widthratio item.product.price 1 item.quantity %}</span>
+                </div>
+                {% endfor %}
+                <div class="d-flex justify-content-between mt-3">
+                    <h5 class="fw-bold mb-0">Total</h5>
+                    <h5 class="fw-bold mb-0 text-success">₹{{ cart.get_total }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const basePrice = {{ cart.get_total }};
+    function updateTotal() {
+        const isFast = document.getElementById('is_fast_delivery').checked;
+        const total = isFast ? basePrice + 50 : basePrice;
+        document.getElementById('display_total').innerText = total.toFixed(2);
+    }
+
+    function toggleUPI(show) {
+        const prompt = document.getElementById('upi_prompt');
+        const submitBtn = document.getElementById('submit_btn');
+        if (show) {
+            prompt.classList.remove('d-none');
+            submitBtn.innerText = "Complete Payment & Confirm Order";
+            submitBtn.onclick = function(e) {
+                if (!document.getElementById('payment_done').checked) {
+                    alert("Please complete the payment first!");
+                    e.preventDefault();
+                }
+            };
+        } else {
+            prompt.classList.add('d-none');
+            submitBtn.innerText = "Confirm Order (Cash on Delivery) - ₹" + document.getElementById('display_total').innerText;
+            submitBtn.onclick = null;
+        }
+    }
+</script>
+{% endblock %}

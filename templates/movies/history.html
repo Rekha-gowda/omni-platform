@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>My Movie Tickets</h2>
+    {% if tickets %}
+        <div class="table-responsive">
+            <table class="table table-hover mt-3">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Movie</th>
+                        <th>Theater & Time</th>
+                        <th>Seats</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td class="small text-muted">#{{ ticket.id }}</td>
+                        <td class="fw-bold">{{ ticket.show.movie.title }}</td>
+                        <td>
+                            <div class="fw-semibold">{{ ticket.show.theater_name }}</div>
+                            <small class="text-muted">{{ ticket.show.show_time|date:"M d, H:i" }}</small>
+                        </td>
+                        <td><span class="badge bg-light text-dark border">{{ ticket.seats }}</span></td>
+                        <td class="fw-bold text-success">₹{{ ticket.total_price }}</td>
+                        <td>
+                            <a href="{% url 'download_movie_ticket_pdf' ticket.id %}" class="btn btn-sm btn-success rounded-pill px-3">
+                                <i class="bi bi-download me-1"></i> PDF
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-3">You have no movie tickets yet.</div>
+    {% endif %}
+    
+    <a href="{% url 'movie_list' %}" class="btn btn-primary mt-3">Browse Movies</a>
+</div>
+{% endblock %}

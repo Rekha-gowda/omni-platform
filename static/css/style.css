@@ -1,0 +1,219 @@
+:root {
+    --primary-gradient: linear-gradient(135deg, #ff8a00, #e52e71);
+    --secondary-gradient: linear-gradient(135deg, #6a11cb, #2575fc);
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    --accent-color: #e52e71;
+    --text-main: #1a1a1a;
+    --text-muted: #666;
+    --bg-main: #f8fafc;
+    --nav-height: 80px;
+    --bottom-nav-height: 70px;
+}
+
+body {
+    background-color: var(--bg-main);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-main);
+}
+
+/* Glassmorphism Components */
+.glass-navbar {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+}
+
+@media (max-width: 768px) {
+    .glass-card {
+        border-radius: 16px;
+    }
+    .glass-card:hover {
+        transform: none;
+    }
+}
+
+/* Typography & Colors */
+.text-gradient {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Premium Buttons */
+.btn-premium {
+    background: var(--primary-gradient);
+    border: none;
+    color: white !important;
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 10px 28px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(229, 46, 113, 0.3);
+}
+
+.btn-premium:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(229, 46, 113, 0.4);
+    opacity: 0.95;
+}
+
+/* Hero Section */
+.hero {
+    background: radial-gradient(circle at top right, rgba(255, 138, 0, 0.05), transparent),
+                radial-gradient(circle at bottom left, rgba(229, 46, 113, 0.05), transparent);
+    padding: 100px 0;
+    text-align: center;
+    border-radius: 0 0 50px 50px;
+    margin-top: -20px;
+}
+
+.fw-800 { font-weight: 800; }
+
+/* Responsive Grid Layouts */
+.responsive-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Default to 4 per row */
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+@media (max-width: 992px) {
+    .responsive-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .responsive-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+}
+
+.grid-span-full {
+    grid-column: 1 / -1;
+}
+
+/* Mobile Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-between; /* Better for more items */
+    padding: 10px 5px 24px 5px;
+    z-index: 1030;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+}
+
+.bottom-nav-item {
+    text-decoration: none;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.65rem; /* Slightly smaller for 6 items */
+    font-weight: 600;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 0; /* Allow shrinking */
+}
+
+.bottom-nav-item i {
+    font-size: 1.3rem; /* Slightly smaller */
+    margin-bottom: 2px;
+}
+
+.bottom-nav-item.active {
+    color: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+@media (min-width: 992px) {
+    .bottom-nav {
+        display: none;
+    }
+}
+
+/* Main Layout Fixes */
+main {
+    flex-grow: 1;
+    padding-bottom: 100px; /* Space for bottom nav */
+}
+
+@media (min-width: 992px) {
+    main {
+        padding-bottom: 3rem;
+    }
+}
+
+/* Responsive Table */
+.table-responsive {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+/* Modal and Overlay fixes for mobile */
+@media (max-width: 576px) {
+    .container {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.5rem; }
+}
+
+/* Image Handling */
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.glass-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+/* Forms */
+.form-control {
+    border-radius: 12px;
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 4px rgba(229, 46, 113, 0.1);
+    border-color: var(--accent-color);
+}

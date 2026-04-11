@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="glass-card p-5 text-center">
+        <i class="bi bi-wifi-off fs-1 text-danger mb-4"></i>
+        <h1 class="fw-bold mb-3">You're Offline</h1>
+        <p class="lead text-secondary mb-4">It looks like you've lost your internet connection. Don't worry, some parts of Omni Platform are still available!</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'home' %}" class="btn btn-premium">Try Home</a>
+            <button onclick="window.location.reload()" class="btn btn-outline-dark rounded-pill px-4">Retry</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

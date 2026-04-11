@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Bus Ticket {{ booking.id }}</title>
+    <style>
+        body { font-family: Helvetica, sans-serif; color: #111; }
+        .ticket-card { border: 2px solid #555; padding: 20px; width: 100%; border-radius: 8px; background-color: #f9f9f9; }
+        .header { text-align: center; background-color: #0d6efd; color: white; padding: 10px; border-radius: 4px; }
+        h1 { margin: 0; font-size: 24px; }
+        .details { margin-top: 20px; }
+        .row { margin-bottom: 8px; font-size: 14px; }
+        .label { font-weight: bold; display: inline-block; width: 130px; }
+        .footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; border-top: 1px solid #ccc; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="ticket-card">
+        <div class="header">
+            <h1>Omni Platform - Bus E-Ticket</h1>
+        </div>
+        <div class="details">
+            <div class="row"><span class="label">Booking ID:</span> {{ booking.id }}</div>
+            <div class="row"><span class="label">Passenger:</span> {{ booking.customer_name }}</div>
+            <div class="row"><span class="label">Bus Operator:</span> {{ booking.trip.bus.name }}</div>
+            <div class="row"><span class="label">Route:</span> {{ booking.trip.source }} -> {{ booking.trip.destination }}</div>
+            <div class="row"><span class="label">Journey Date:</span> {{ booking.trip.departure_date|date:"Y-m-d" }}</div>
+            <div class="row"><span class="label">Timing:</span> {{ booking.trip.timing_shift }}</div>
+            <div class="row"><span class="label">Seats Booked:</span> {{ booking.no_of_seats }}</div>
+            <div class="row"><span class="label">Total Paid:</span> ₹{{ booking.total_cost }}</div>
+        </div>
+        <div class="footer">
+            Note: This is an electronically generated ticket. Please keep it handy during your journey.
+        </div>
+    </div>
+</body>
+</html>
