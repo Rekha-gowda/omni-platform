@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import Movie, Show, MovieTicket, MovieSeat, MovieCart, MovieCartItem
 from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa  # We will use this now
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 
 
 def movie_list(request):
@@ -113,13 +113,23 @@ def ticket_history(request):
 @login_required
 def download_ticket_pdf(request, ticket_id):
     ticket = get_object_or_404(MovieTicket, pk=ticket_id, user=request.user)
-    template_path = 'movies/ticket_pdf.html'
-    context = {'ticket': ticket}
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="MovieTicket_{ticket.id}.pdf"'
-    template = get_template(template_path)
-    html = template.render(context)
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    if pisa_status.err:
-        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    
+    p = canvas.Canvas(response, pagesize=letter)
+    p.setFont("Helvetica-Bold", 20)
+    p.drawString(100, 750, "Omni Platform - Movie Ticket")
+    
+    p.setFont("Helvetica", 12)
+    p.drawString(100, 720, f"Ticket ID: {ticket.id}")
+    p.drawString(100, 700, f"Customer: {ticket.customer_name}")
+    p.drawString(100, 680, f"Movie: {ticket.show.movie.title}")
+    p.drawString(100, 660, f"Theater: {ticket.show.theater_name}")
+    p.drawString(100, 640, f"Show Time: {ticket.show.time}")
+    p.drawString(100, 620, f"Number of Seats: {ticket.seats}")
+    p.drawString(100, 600, f"Total Amount: ₹{ticket.total_price}")
+    p.drawString(100, 580, f"Status: {ticket.payment_method} - Confirmed")
+    
+    p.showPage()
+    p.save()
     return response

@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils import timezone
 from django.http import HttpResponse
-from django.template.loader import get_template
-from xhtml2pdf import pisa
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 from .models import Bus, Trip, BusBooking, BusSeat
 
 
@@ -90,13 +90,24 @@ def booking_history(request):
 @login_required
 def download_ticket_pdf(request, booking_id):
     booking = get_object_or_404(BusBooking, pk=booking_id, user=request.user)
-    template_path = 'travellers/ticket_pdf.html'
-    context = {'booking': booking}
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="BusTicket_{booking.id}.pdf"'
-    template = get_template(template_path)
-    html = template.render(context)
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    if pisa_status.err:
-        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    
+    p = canvas.Canvas(response, pagesize=letter)
+    p.setFont("Helvetica-Bold", 20)
+    p.drawString(100, 750, "Omni Platform - Bus Ticket")
+    
+    p.setFont("Helvetica", 12)
+    p.drawString(100, 720, f"Booking ID: {booking.id}")
+    p.drawString(100, 700, f"Customer: {booking.customer_name}")
+    p.drawString(100, 680, f"Bus: {booking.trip.bus.name}")
+    p.drawString(100, 660, f"Route: {booking.trip.source} to {booking.trip.destination}")
+    p.drawString(100, 640, f"Travel Date: {booking.trip.departure_date}")
+    p.drawString(100, 620, f"Reporting Time: {booking.trip.departure_time}")
+    p.drawString(100, 600, f"Number of Seats: {booking.no_of_seats}")
+    p.drawString(100, 580, f"Total Amount: ₹{booking.total_cost}")
+    p.drawString(100, 560, f"Status: {booking.payment_method} - Confirmed")
+    
+    p.showPage()
+    p.save()
     return response
