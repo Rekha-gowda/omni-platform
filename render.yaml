@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: omni-platform
+    env: python
+    buildCommand: ./build.sh
+    startCommand: gunicorn omni_platform_project.wsgi
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: omni-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: 3.10.12
+
+databases:
+  - name: omni-db
+    plan: free
