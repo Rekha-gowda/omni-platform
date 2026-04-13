@@ -100,6 +100,11 @@ def checkout_movie_cart(request):
                 payment_method=payment_method
             )
             ref_id = ticket.id
+            
+            # CLEAR EXPIRY ON CONFIRMED BOOKING
+            for seat in seats:
+                seat.lock_expires_at = None
+                seat.save()
 
         cart.items.all().delete()
         amount_str = f"{total:.2f}"

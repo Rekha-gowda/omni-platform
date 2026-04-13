@@ -65,6 +65,7 @@ def book_bus(request, trip_id):
                     seat.locked_by = request.user
                     seat.lock_expires_at = timezone.now() + timezone.timedelta(hours=3)
                     seat.save()
+
             booking = BusBooking.objects.create(
                 user=request.user, 
                 trip=trip, 
@@ -75,6 +76,12 @@ def book_bus(request, trip_id):
                 customer_phone=customer_phone,
                 payment_method=payment_method
             )
+
+            # CLEAR EXPIRY ON CONFIRMED BOOKING
+            for sid in selected_seat_ids:
+                seat = get_object_or_404(BusSeat, pk=sid)
+                seat.lock_expires_at = None
+                seat.save()
             amount_str = f"{total:.2f}"
             if payment_method == 'UPI':
                 return redirect(f"/payment/success/?amount={amount_str}&module=Travellers&ref={booking.id}")
