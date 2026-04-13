@@ -53,9 +53,10 @@ def buy_product(request, pk):
         )
         ShoppingOrderItem.objects.create(order=order, product=product, quantity=quantity, price=product.price, size=size)
         
+        total_str = f"{total:.2f}"
         if payment_method in ['UPI', 'Card']:
-            return redirect('payment_success')
-        return redirect(f"/payment/confirm/?amount={order.total_amount}&module=Shopping&ref={order.id}")
+            return redirect(f"/payment/success/?amount={total_str}&module=Shopping&ref={order.id}")
+        return redirect(f"/payment/confirm/?amount={total_str}&module=Shopping&ref={order.id}")
     return render(request, 'shopping/buy_product.html', {'product': product, 'previous_addresses': previous_addresses})
 
 @login_required
@@ -119,9 +120,10 @@ def checkout_cart(request):
                 
             cart.items.all().delete()
             
+            total_str = f"{total:.2f}"
             if payment_method in ['UPI', 'Card']:
-                return redirect('payment_success')
-            return redirect(f"/payment/confirm/?amount={total}&module=Shopping&ref={order.id}")
+                return redirect(f"/payment/success/?amount={total_str}&module=Shopping&ref={order.id}")
+            return redirect(f"/payment/confirm/?amount={total_str}&module=Shopping&ref={order.id}")
         return redirect('cart_view')
         
     return render(request, 'shopping/checkout.html', {'cart': cart, 'previous_addresses': previous_addresses})

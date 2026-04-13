@@ -100,9 +100,10 @@ def checkout_movie_cart(request):
             )
 
         cart.items.all().delete()
+        amount_str = f"{total:.2f}"
         if payment_method == 'UPI':
-            return redirect(f"/payment/success/?amount={total}&module=Movies")
-        return redirect(f"/payment/confirm/?amount={total}&module=Movies")
+            return redirect(f"/payment/success/?amount={amount_str}&module=Movies")
+        return redirect(f"/payment/confirm/?amount={amount_str}&module=Movies")
     return redirect('movie_cart_view')
 
 @login_required

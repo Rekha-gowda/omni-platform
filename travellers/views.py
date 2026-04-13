@@ -75,9 +75,10 @@ def book_bus(request, trip_id):
                 customer_phone=customer_phone,
                 payment_method=payment_method
             )
+            amount_str = f"{total:.2f}"
             if payment_method == 'UPI':
-                return redirect(f"/payment/success/?amount={total}&module=Travellers&ref={booking.id}")
-            return redirect(f"/payment/confirm/?amount={total}&module=Travellers&ref={booking.id}")
+                return redirect(f"/payment/success/?amount={amount_str}&module=Travellers&ref={booking.id}")
+            return redirect(f"/payment/confirm/?amount={amount_str}&module=Travellers&ref={booking.id}")
             
     seats = trip.seats.all()
     return render(request, 'travellers/book_bus.html', {'trip': trip, 'seats': seats})

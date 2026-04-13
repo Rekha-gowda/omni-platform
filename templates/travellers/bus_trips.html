@@ -48,8 +48,10 @@
         </div>
         {% empty %}
         <div class="col-12 text-center py-5">
-            <p class="text-muted fs-5">No active trips scheduled for this bus today.</p>
-            <a href="{% url 'bus_list' %}" class="btn btn-outline-primary mt-3">Back to All Buses</a>
+            <div class="alert alert-info rounded-pill py-3">
+                <p class="mb-0 fw-bold">🚌 Currently not available trips for this bus. We are updating schedules in admin.</p>
+            </div>
+            <a href="{% url 'bus_list' %}" class="btn btn-primary btn-md rounded-pill px-4 mt-3 fw-bold">View All Other Buses</a>
         </div>
         {% endfor %}
     </div>

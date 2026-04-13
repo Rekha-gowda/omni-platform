@@ -13,10 +13,21 @@
             {% endif %}
         </div>
         <p class="text-muted mb-4">Your order/booking has been confirmed. You can view it in your history.</p>
-        <div class="d-flex justify-content-center gap-3">
-            <a href="{% url 'home' %}" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">Return Home</a>
-            {% if request.GET.module in 'Movies,Travellers' %}
-            <a href="{% url 'download_ticket_pdf' %}?module={{ request.GET.module }}&ref={{ request.GET.ref }}" class="btn btn-primary rounded-pill px-4 fw-bold">Download PDF Ticket</a>
+        <div class="d-grid gap-3 d-sm-flex justify-content-center">
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-md rounded-pill px-4 fw-bold">Return to Index Page</a>
+            
+            {% if module == 'Shopping' %}
+            <a href="{% url 'product_list' %}" class="btn btn-success btn-md rounded-pill px-4 fw-bold">Shop More Products</a>
+            {% elif module == 'Food' %}
+            <a href="{% url 'restaurant_list' %}" class="btn btn-warning btn-md rounded-pill px-4 fw-bold">Order More Food</a>
+            {% elif module == 'Movies' %}
+            <a href="{% url 'movie_list' %}" class="btn btn-danger btn-md rounded-pill px-4 fw-bold">Book More Movies</a>
+            {% elif module == 'Travellers' %}
+            <a href="{% url 'bus_list' %}" class="btn btn-primary btn-md rounded-pill px-4 fw-bold">Book More Travels</a>
+            {% endif %}
+
+            {% if module in 'Movies,Travellers' and ref %}
+            <a href="{% url 'download_ticket_pdf' %}?module={{ module }}&ref={{ ref }}" class="btn btn-dark btn-md rounded-pill px-4 fw-bold">Download Ticket PDF</a>
             {% endif %}
         </div>
     </div>
