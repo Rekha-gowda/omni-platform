@@ -66,7 +66,7 @@ def download_ticket_pdf(request):
             y -= 20
             p.drawString(100, y, f"Theater: {ticket.show.theater_name}")
             y -= 20
-            p.drawString(100, y, f"Show Time: {ticket.show.show_time.strftime('%D, %M %d - %h:%i %p')}")
+            p.drawString(100, y, f"Show Time: {ticket.show.show_time.strftime('%b %d, %Y - %I:%M %p')}")
             y -= 20
             p.drawString(100, y, f"Seats: {ticket.seats}")
             y -= 20
