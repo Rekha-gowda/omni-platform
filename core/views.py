@@ -45,14 +45,64 @@ def download_ticket_pdf(request):
     response['Content-Disposition'] = f'attachment; filename="{module}_Ticket.pdf"'
     
     p = canvas.Canvas(response, pagesize=letter)
-    p.setFont("Helvetica-Bold", 24)
-    p.drawString(100, 750, "Omni Platform E-Ticket")
     
-    p.setFont("Helvetica", 14)
-    p.drawString(100, 700, f"Module: {module}")
-    p.drawString(100, 670, f"Reference Number: {ref}")
-    p.drawString(100, 640, f"Issued To: {request.user.username}")
-    p.drawString(100, 610, "Thank you for using our platform!")
+    # Header
+    p.setFont("Helvetica-Bold", 24)
+    p.setStrokeColorRGB(0.9, 0.18, 0.44) # Omni Pink
+    p.drawString(100, 750, "Omni Platform E-Ticket")
+    p.line(100, 740, 500, 740)
+    
+    p.setFont("Helvetica-Bold", 16)
+    p.setStrokeColorRGB(0, 0, 0)
+    p.drawString(100, 710, f"Service: {module}")
+    
+    p.setFont("Helvetica", 12)
+    y = 680
+    
+    if module == 'Movies':
+        try:
+            ticket = MovieTicket.objects.get(id=ref, user=request.user)
+            p.drawString(100, y, f"Movie: {ticket.show.movie.title}")
+            y -= 20
+            p.drawString(100, y, f"Theater: {ticket.show.theater_name}")
+            y -= 20
+            p.drawString(100, y, f"Show Time: {ticket.show.show_time.strftime('%D, %M %d - %h:%i %p')}")
+            y -= 20
+            p.drawString(100, y, f"Seats: {ticket.seats}")
+            y -= 20
+            p.drawString(100, y, f"Total Amount: ₹{ticket.total_price}")
+            y -= 20
+            p.drawString(100, y, f"Customer: {ticket.customer_name}")
+        except MovieTicket.DoesNotExist:
+            p.drawString(100, y, f"Reference: {ref}")
+            p.drawString(100, y-20, "Detail retrieval failed.")
+            
+    elif module == 'Travellers':
+        try:
+            booking = BusBooking.objects.get(id=ref, user=request.user)
+            p.drawString(100, y, f"Bus: {booking.trip.bus.name}")
+            y -= 20
+            p.drawString(100, y, f"Route: {booking.trip.source} to {booking.trip.destination}")
+            y -= 20
+            p.drawString(100, y, f"Departure: {booking.trip.departure_date} at {booking.trip.departure_time if hasattr(booking.trip, 'departure_time') else booking.trip.timing_shift}")
+            y -= 20
+            p.drawString(100, y, f"Number of Seats: {booking.no_of_seats}")
+            y -= 20
+            p.drawString(100, y, f"Total Amount: ₹{booking.total_cost}")
+            y -= 20
+            p.drawString(100, y, f"Customer: {booking.customer_name}")
+        except BusBooking.DoesNotExist:
+            p.drawString(100, y, f"Reference: {ref}")
+            p.drawString(100, y-20, "Detail retrieval failed.")
+    
+    else:
+        p.drawString(100, y, f"Reference Number: {ref}")
+        y -= 20
+        p.drawString(100, y, f"Issued To: {request.user.username}")
+    
+    y -= 40
+    p.setFont("Helvetica-Oblique", 10)
+    p.drawString(100, y, "Thank you for choosing Omni Platform! Enjoy your experience.")
     
     p.showPage()
     p.save()

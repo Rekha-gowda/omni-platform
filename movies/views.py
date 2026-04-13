@@ -87,8 +87,9 @@ def checkout_movie_cart(request):
             item.seat.lock_expires_at = None
             item.seat.save()
             
+        ref_id = None
         for show, seats in shows_seats.items():
-            MovieTicket.objects.create(
+            ticket = MovieTicket.objects.create(
                 user=request.user,
                 show=show,
                 seats=len(seats),
@@ -98,12 +99,13 @@ def checkout_movie_cart(request):
                 customer_phone=customer_phone,
                 payment_method=payment_method
             )
+            ref_id = ticket.id
 
         cart.items.all().delete()
         amount_str = f"{total:.2f}"
         if payment_method == 'UPI':
-            return redirect(f"/payment/success/?amount={amount_str}&module=Movies")
-        return redirect(f"/payment/confirm/?amount={amount_str}&module=Movies")
+            return redirect(f"/payment/success/?amount={amount_str}&module=Movies&ref={ref_id}")
+        return redirect(f"/payment/confirm/?amount={amount_str}&module=Movies&ref={ref_id}")
     return redirect('movie_cart_view')
 
 @login_required
