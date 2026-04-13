@@ -16,6 +16,11 @@ services:
       - key: PYTHON_VERSION
         value: 3.10.12
 
+    disk:
+      name: media-disk
+      mountPath: /opt/render/project/src/media
+      sizeGB: 1
+
 databases:
   - name: omni-db
     plan: free
