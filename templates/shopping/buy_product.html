@@ -5,7 +5,7 @@
         <h2 class="fw-bold mb-4">Checkout</h2>
         <div class="d-flex align-items-center mb-4">
             {% if product.image %}
-            <img src="{{ product.image.url }}" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
             {% endif %}
             <div>
                 <h5 class="mb-0">{{ product.name }}</h5>
@@ -58,52 +58,6 @@
                 </div>
                 <textarea name="delivery_address" id="delivery_address" class="form-control" rows="3" required placeholder="Enter full address..."></textarea>
             </div>
-            <script>
-                function getLocation() {
-                    const addrField = document.getElementById('delivery_address');
-                    if (navigator.geolocation) {
-                        addrField.placeholder = "Locating your current address...";
-                        navigator.geolocation.getCurrentPosition(
-                            (position) => {
-                                const lat = position.coords.latitude;
-                                const lon = position.coords.longitude;
-                                // Nominatim reverse geocoding with more detail
-                                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        const addr = data.address;
-                                        const parts = [
-                                            addr.house_number || "",
-                                            addr.road || addr.suburb || addr.neighbourhood || "",
-                                            addr.city_district || addr.mandal || addr.town || "",
-                                            addr.city || addr.state_district || "",
-                                            addr.state || "",
-                                            addr.postcode || ""
-                                        ].filter(part => part.trim() !== "");
-                                        
-                                        if (parts.length > 0) {
-                                            addrField.value = parts.join(', ');
-                                        } else {
-                                            addrField.value = data.display_name || `Location: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-                                        }
-                                        addrField.placeholder = "Enter full address...";
-                                    })
-                                    .catch(err => {
-                                        addrField.value = `Location: ${lat.toFixed(4)}, ${lon.toFixed(4)} (Approx Address Needed)`;
-                                        addrField.placeholder = "Enter full address...";
-                                    });
-                            },
-                            (error) => {
-                                alert("Error getting location: " + error.message + ". Please enter address manually.");
-                                addrField.placeholder = "Enter full address...";
-                            },
-                            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-                        );
-                    } else {
-                        alert("Geolocation is not supported by this browser.");
-                    }
-                }
-            </script>
             <!-- Fast Delivery Option -->
             <div class="form-check mb-4 p-3 border rounded bg-light">
                 <input class="form-check-input ms-0 me-2" type="checkbox" name="is_fast_delivery" id="is_fast_delivery" onchange="updateTotal()">
@@ -141,7 +95,51 @@
     </div>
 
     <script>
-        const basePrice = {{ product.price|default:0 }};
+        function getLocation() {
+            const addrField = document.getElementById('delivery_address');
+            if (navigator.geolocation) {
+                addrField.placeholder = "Locating your current address...";
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const addr = data.address;
+                                const parts = [
+                                    addr.house_number || "",
+                                    addr.road || addr.suburb || addr.neighbourhood || "",
+                                    addr.city_district || addr.mandal || addr.town || "",
+                                    addr.city || addr.state_district || "",
+                                    addr.state || "",
+                                    addr.postcode || ""
+                                ].filter(part => part.trim() !== "");
+                                
+                                if (parts.length > 0) {
+                                    addrField.value = parts.join(', ');
+                                } else {
+                                    addrField.value = data.display_name || `Location: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                                }
+                                addrField.placeholder = "Enter full address...";
+                            })
+                            .catch(err => {
+                                addrField.value = `Location: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                                addrField.placeholder = "Enter full address...";
+                            });
+                    },
+                    (error) => {
+                        alert("Error getting location: " + error.message);
+                        addrField.placeholder = "Enter full address...";
+                    },
+                    { enableHighAccuracy: true, timeout: 5000 }
+                );
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        const basePrice = parseFloat("{{ product.price|default:0 }}");
         function updateTotal() {
             const isFast = document.getElementById('is_fast_delivery').checked;
             const total = isFast ? basePrice + 50 : basePrice;
