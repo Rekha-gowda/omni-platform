@@ -33,7 +33,8 @@ def bus_trips(request, bus_id):
     # Also reset seats for trips that have arrived (Arrival timing logic)
     BusSeat.objects.filter(trip__bus=bus, trip__arrival_time__lt=timezone.now()).update(is_booked=False, locked_by=None, lock_expires_at=None)
 
-    trips = bus.trips.all().order_by('departure_date', 'timing_shift')
+    # Filter trips to only include future ones
+    trips = bus.trips.filter(departure_date__gte=timezone.now().date()).order_by('departure_date', 'timing_shift')
     return render(request, 'travellers/bus_trips.html', {'bus': bus, 'trips': trips})
 
 @login_required

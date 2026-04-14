@@ -135,7 +135,8 @@ def unified_history(request):
         b.type = 'bus'
         
     # Handle potential None timestamps by using a very old date as default
-    default_date = timezone.datetime(1970, 1, 1, tzinfo=timezone.utc)
+    import datetime
+    default_date = datetime.datetime(1970, 1, 1, tzinfo=timezone.utc)
     
     activities = sorted(
         itertools.chain(shopping_orders, food_orders, movie_tickets, bus_bookings),
