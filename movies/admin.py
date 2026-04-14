@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Movie, Show, MovieTicket
+from .models import Movie, Show, MovieTicket, Theater
+
+@admin.register(Theater)
+class TheaterAdmin(admin.ModelAdmin):
+    list_display = ('name', 'address', 'location_url')
+    search_fields = ('name', 'address')
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
@@ -7,9 +12,9 @@ class MovieAdmin(admin.ModelAdmin):
 
 @admin.register(Show)
 class ShowAdmin(admin.ModelAdmin):
-    list_display = ('movie', 'theater_name', 'show_time', 'price')
-    list_filter = ('theater_name', 'show_time')
-    search_fields = ('movie__title', 'theater_name')
+    list_display = ('movie', 'theater', 'theater_name', 'show_time', 'price')
+    list_filter = ('show_time', 'movie', 'theater')
+    search_fields = ('movie__title', 'theater__name', 'theater_name')
 
 @admin.register(MovieTicket)
 class MovieTicketAdmin(admin.ModelAdmin):

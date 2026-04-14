@@ -13,14 +13,24 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
 
+class Theater(models.Model):
+    name = models.CharField(max_length=200)
+    address = models.TextField()
+    location_url = models.URLField(blank=True, null=True, help_text="Google Maps link or similar")
+    
+    def __str__(self):
+        return self.name
+
 class Show(models.Model):
     movie = models.ForeignKey(Movie, related_name='shows', on_delete=models.CASCADE)
-    theater_name = models.CharField(max_length=200)
+    theater = models.ForeignKey(Theater, related_name='shows', on_delete=models.CASCADE, null=True, blank=True)
+    theater_name = models.CharField(max_length=200, help_text="Legacy field, use 'theater' for new entries")
     show_time = models.DateTimeField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
-        return f"{self.movie.title} at {self.theater_name} ({self.show_time})"
+        t_name = self.theater.name if self.theater else self.theater_name
+        return f"{self.movie.title} at {t_name} ({self.show_time})"
 
 class MovieTicket(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

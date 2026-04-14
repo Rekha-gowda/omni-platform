@@ -115,12 +115,19 @@ def robots_txt(request):
 
 @login_required
 def unified_history(request):
-    shopping_orders = ShoppingOrder.objects.filter(user=request.user)
-    food_orders = FoodOrder.objects.filter(user=request.user)
-    movie_tickets = MovieTicket.objects.filter(user=request.user)
-    bus_bookings = BusBooking.objects.filter(user=request.user)
+    # If superuser, show everything. Otherwise, show only current user's history.
+    if request.user.is_superuser:
+        shopping_orders = list(ShoppingOrder.objects.all())
+        food_orders = list(FoodOrder.objects.all())
+        movie_tickets = list(MovieTicket.objects.all())
+        bus_bookings = list(BusBooking.objects.all())
+    else:
+        shopping_orders = list(ShoppingOrder.objects.filter(user=request.user))
+        food_orders = list(FoodOrder.objects.filter(user=request.user))
+        movie_tickets = list(MovieTicket.objects.filter(user=request.user))
+        bus_bookings = list(BusBooking.objects.filter(user=request.user))
     
-    # Add a timestamp attribute to each for consistent sorting
+    # Add attributes for consistent sorting and identification
     for o in shopping_orders: 
         o.timestamp = o.created_at
         o.type = 'shopping'
@@ -136,7 +143,7 @@ def unified_history(request):
         
     # Handle potential None timestamps by using a very old date as default
     import datetime
-    default_date = datetime.datetime(1970, 1, 1, tzinfo=timezone.utc)
+    default_date = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
     
     activities = sorted(
         itertools.chain(shopping_orders, food_orders, movie_tickets, bus_bookings),
