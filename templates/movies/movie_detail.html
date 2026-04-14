@@ -18,9 +18,15 @@
         </div>
     </div>
 
+    {% if error %}
+    <div class="alert alert-danger rounded-pill px-4 shadow-sm border-0 mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error }}
+    </div>
+    {% endif %}
+
     <h3 class="fw-bold mb-4 border-bottom pb-2">Available Shows</h3>
     <div class="row g-4">
-        {% for show in movie.shows.all %}
+        {% for show in available_shows %}
         <div class="col-md-6 col-lg-4">
             <div class="card shadow-sm border-warning">
                 <div class="card-body">
@@ -34,7 +40,7 @@
         {% empty %}
         <div class="col-12">
             <div class="alert alert-secondary text-center rounded-pill py-3">
-                <p class="mb-0 fw-bold">🎬 Currently not available shows for this movie. Check back later!</p>
+                <p class="mb-0 fw-bold">🎬 Currently shows are not available for this movie. Check back later!</p>
             </div>
         </div>
         {% endfor %}

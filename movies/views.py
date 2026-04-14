@@ -17,14 +17,22 @@ def movie_list(request):
 
 def movie_detail(request, pk):
     movie = get_object_or_404(Movie, pk=pk)
-    return render(request, 'movies/movie_detail.html', {'movie': movie})
+    # Filter shows to only include future ones
+    available_shows = movie.shows.filter(show_time__gt=timezone.now())
+    return render(request, 'movies/movie_detail.html', {'movie': movie, 'available_shows': available_shows})
 
 @login_required
 def book_ticket(request, show_id):
     show = get_object_or_404(Show, pk=show_id)
-    # Release expired locks
+    
+    # Release expired locks (3-hour rule for pending locks)
     MovieSeat.objects.filter(show=show, lock_expires_at__lt=timezone.now()).update(is_booked=False, locked_by=None, lock_expires_at=None)
     
+    # Also unlock seats if the show time has passed (Arrival/Show timing logic)
+    if show.show_time < timezone.now():
+        MovieSeat.objects.filter(show=show).update(is_booked=False, locked_by=None, lock_expires_at=None)
+        return render(request, 'movies/book_ticket.html', {'show': show, 'error': "This show has already passed and bookings are closed."})
+
     if not show.seats.exists():
         rows = ['A', 'B', 'C', 'D']
         seats = [MovieSeat(show=show, seat_identifier=f"{r}{c}") for r in rows for c in range(1, 9)]
@@ -133,7 +141,7 @@ def download_ticket_pdf(request, ticket_id):
     p.drawString(100, 700, f"Customer: {ticket.customer_name}")
     p.drawString(100, 680, f"Movie: {ticket.show.movie.title}")
     p.drawString(100, 660, f"Theater: {ticket.show.theater_name}")
-    p.drawString(100, 640, f"Show Time: {ticket.show.time}")
+    p.drawString(100, 640, f"Show Time: {ticket.show.show_time}")
     p.drawString(100, 620, f"Number of Seats: {ticket.seats}")
     p.drawString(100, 600, f"Total Amount: ₹{ticket.total_price}")
     p.drawString(100, 580, f"Status: {ticket.payment_method} - Confirmed")

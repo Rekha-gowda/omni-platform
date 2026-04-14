@@ -30,6 +30,9 @@ def bus_trips(request, bus_id):
     # Release expired locks for all trips of this bus
     BusSeat.objects.filter(trip__bus=bus, lock_expires_at__lt=timezone.now()).update(is_booked=False, locked_by=None, lock_expires_at=None)
     
+    # Also reset seats for trips that have arrived (Arrival timing logic)
+    BusSeat.objects.filter(trip__bus=bus, trip__arrival_time__lt=timezone.now()).update(is_booked=False, locked_by=None, lock_expires_at=None)
+
     trips = bus.trips.all().order_by('departure_date', 'timing_shift')
     return render(request, 'travellers/bus_trips.html', {'bus': bus, 'trips': trips})
 
@@ -111,7 +114,7 @@ def download_ticket_pdf(request, booking_id):
     p.drawString(100, 680, f"Bus: {booking.trip.bus.name}")
     p.drawString(100, 660, f"Route: {booking.trip.source} to {booking.trip.destination}")
     p.drawString(100, 640, f"Travel Date: {booking.trip.departure_date}")
-    p.drawString(100, 620, f"Reporting Time: {booking.trip.departure_time}")
+    p.drawString(100, 620, f"Reporting Time: {booking.trip.timing_shift}")
     p.drawString(100, 600, f"Number of Seats: {booking.no_of_seats}")
     p.drawString(100, 580, f"Total Amount: ₹{booking.total_cost}")
     p.drawString(100, 560, f"Status: {booking.payment_method} - Confirmed")

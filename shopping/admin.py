@@ -19,7 +19,7 @@ class ShoppingReturnInline(admin.TabularInline):
 
 @admin.register(ShoppingOrder)
 class ShoppingOrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'total_amount', 'status', 'current_location', 'agent_phone', 'expected_delivery', 'is_paid', 'created_at')
+    list_display = ('id', 'user', 'delivery_name', 'delivery_phone', 'total_amount', 'status', 'current_location', 'agent_phone', 'expected_delivery', 'is_paid', 'created_at')
     list_filter = ('is_paid', 'status', 'created_at')
     search_fields = ('id', 'user__username', 'delivery_name', 'delivery_phone', 'current_location', 'agent_phone')
     inlines = [ShoppingOrderItemInline]

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
@@ -133,9 +134,12 @@ def unified_history(request):
         b.timestamp = b.booking_time
         b.type = 'bus'
         
+    # Handle potential None timestamps by using a very old date as default
+    default_date = timezone.datetime(1970, 1, 1, tzinfo=timezone.utc)
+    
     activities = sorted(
         itertools.chain(shopping_orders, food_orders, movie_tickets, bus_bookings),
-        key=attrgetter('timestamp'),
+        key=lambda x: getattr(x, 'timestamp', None) or default_date,
         reverse=True
     )
     
