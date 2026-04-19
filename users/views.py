@@ -21,7 +21,23 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            
+            # Record Login History
+            from .models import LoginHistory
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]
+            else:
+                ip = request.META.get('REMOTE_ADDR')
+            
+            LoginHistory.objects.create(
+                user=user,
+                ip_address=ip,
+                user_agent=request.META.get('HTTP_USER_AGENT')
+            )
+            
             return redirect('home')
+
     else:
         form = AuthenticationForm()
     return render(request, 'users/login.html', {'form': form})

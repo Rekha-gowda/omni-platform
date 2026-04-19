@@ -27,23 +27,38 @@
                                 {% if activity.type == 'shopping' %}
                                     <span class="badge bg-primary mb-2"><i class="bi bi-bag-check me-1"></i> Shopping Order</span>
                                     <h5 class="mb-1">Order #{{ activity.id }}</h5>
+                                    {% if user.is_superuser %}<p class="text-primary small mb-1"><strong>User:</strong> {{ activity.user.username }}</p>{% endif %}
                                     <p class="text-muted small mb-0">Products: {{ activity.items.count }} items</p>
                                 {% elif activity.type == 'food' %}
                                     <span class="badge bg-danger mb-2"><i class="bi bi-egg-fried me-1"></i> Food Delivery</span>
                                     <h5 class="mb-1">{{ activity.restaurant.name }}</h5>
+                                    {% if user.is_superuser %}<p class="text-primary small mb-1"><strong>User:</strong> {{ activity.user.username }}</p>{% endif %}
                                     <p class="text-muted small mb-0">Status: {{ activity.status }}</p>
                                 {% elif activity.type == 'movie' %}
                                     <span class="badge bg-warning text-dark mb-2"><i class="bi bi-ticket-perforated me-1"></i> Movie Ticket</span>
                                     <h5 class="mb-1">{{ activity.show.movie.title }}</h5>
+                                    {% if user.is_superuser %}<p class="text-primary small mb-1"><strong>User:</strong> {{ activity.user.username }}</p>{% endif %}
                                     <p class="text-muted small mb-0">{{ activity.show.theater_name }} | {{ activity.show.show_time|date:"D, d M Y" }}</p>
                                 {% elif activity.type == 'bus' %}
                                     <span class="badge bg-success mb-2"><i class="bi bi-bus-front me-1"></i> Bus Booking</span>
                                     <h5 class="mb-1">{{ activity.trip.bus.name }}</h5>
+                                    {% if user.is_superuser %}<p class="text-primary small mb-1"><strong>User:</strong> {{ activity.user.username }}</p>{% endif %}
                                     <p class="text-muted small mb-0">{{ activity.trip.source }} to {{ activity.trip.destination }} | {{ activity.trip.departure_date }}</p>
+                                {% elif activity.type == 'login' %}
+                                    <span class="badge bg-info text-dark mb-2"><i class="bi bi-person-check me-1"></i> User Login</span>
+                                    <h5 class="mb-1">Login Event: {{ activity.user.username }}</h5>
+                                    <p class="text-muted small mb-0">IP: {{ activity.ip_address }}</p>
+                                    <p class="text-muted x-small mb-0">{{ activity.user_agent|truncatechars:50 }}</p>
                                 {% endif %}
                             </div>
                             <div class="text-end">
-                                <div class="fw-bold text-accent h5 mb-1">₹{{ activity.total_amount|default:activity.total_price|default:activity.total_cost }}</div>
+                                <div class="fw-bold text-accent h5 mb-1">
+                                    {% if activity.type == 'login' %}
+                                        --
+                                    {% else %}
+                                        ₹{{ activity.total_amount|default:activity.total_price|default:activity.total_cost }}
+                                    {% endif %}
+                                </div>
                                 <div class="text-muted x-small">{{ activity.timestamp|date:"d M, Y h:i A" }}</div>
                             </div>
                         </div>

@@ -121,16 +121,21 @@ def order_history(request):
     for order in orders:
         hours_passed = (now - order.created_at).total_seconds() / 3600.0
         if hours_passed >= 1:
-            order.status = 'Delivered'
-            order.is_delivered = True
-            order.can_review = True
+            if order.status.startswith('Preparing'):
+                order.status = 'Delivered'
+                order.save(update_fields=['status'])
+            order.is_delivered = (order.status == 'Delivered')
+            order.can_review = order.is_delivered
             # can_complain is True up to 1 hour AFTER delivery (total 2 hours)
             order.can_complain = hours_passed < 2.0
         else:
-            order.status = 'Preparing (Arriving in 1 Hour)'
-            order.is_delivered = False
-            order.can_review = False
+            # If status was manually changed to Delivered earlier, respect it
+            order.is_delivered = (order.status == 'Delivered')
+            order.can_review = order.is_delivered
             order.can_complain = True
+            if order.status == 'Pending':
+                order.status = 'Preparing (Arriving in 1 Hour)'
+                order.save(update_fields=['status'])
             
         order.has_complaint = order.complaints.exists()
         # Check for review specifically for THIS order

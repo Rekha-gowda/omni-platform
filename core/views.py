@@ -8,6 +8,7 @@ from shopping.models import ShoppingOrder
 from foods.models import FoodOrder
 from movies.models import MovieTicket
 from travellers.models import BusBooking
+from users.models import LoginHistory
 import itertools
 from operator import attrgetter
 
@@ -121,11 +122,13 @@ def unified_history(request):
         food_orders = list(FoodOrder.objects.all())
         movie_tickets = list(MovieTicket.objects.all())
         bus_bookings = list(BusBooking.objects.all())
+        login_history = list(LoginHistory.objects.all())
     else:
         shopping_orders = list(ShoppingOrder.objects.filter(user=request.user))
         food_orders = list(FoodOrder.objects.filter(user=request.user))
         movie_tickets = list(MovieTicket.objects.filter(user=request.user))
         bus_bookings = list(BusBooking.objects.filter(user=request.user))
+        login_history = []
     
     # Add attributes for consistent sorting and identification
     for o in shopping_orders: 
@@ -140,13 +143,16 @@ def unified_history(request):
     for b in bus_bookings:
         b.timestamp = b.booking_time
         b.type = 'bus'
+    for l in login_history:
+        l.timestamp = l.login_time
+        l.type = 'login'
         
     # Handle potential None timestamps by using a very old date as default
     import datetime
     default_date = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
     
     activities = sorted(
-        itertools.chain(shopping_orders, food_orders, movie_tickets, bus_bookings),
+        itertools.chain(shopping_orders, food_orders, movie_tickets, bus_bookings, login_history),
         key=lambda x: getattr(x, 'timestamp', None) or default_date,
         reverse=True
     )

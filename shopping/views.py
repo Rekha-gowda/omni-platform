@@ -137,16 +137,18 @@ def order_history(request):
         delivery_threshold = 3 if order.is_fast_delivery else 7
         
         if days_passed >= delivery_threshold:
-            order.status = 'Delivered'
-            order.is_delivered = True
-            order.can_return = (days_passed >= delivery_threshold and days_passed <= (delivery_threshold + 3))
-            order.can_review = True
+            if order.status == 'Pending':
+                order.status = 'Delivered'
+                order.save(update_fields=['status'])
+            order.is_delivered = (order.status == 'Delivered')
+            order.can_return = (order.is_delivered and days_passed <= (delivery_threshold + 3))
+            order.can_review = order.is_delivered
         else:
-            order.status = 'Pending'
-            order.is_delivered = False
+            if order.status == 'Pending':
+                order.expected_date = order.created_at + datetime.timedelta(days=delivery_threshold)
+            order.is_delivered = (order.status == 'Delivered')
             order.can_return = False
-            order.can_review = False
-            order.expected_date = order.created_at + datetime.timedelta(days=delivery_threshold)
+            order.can_review = order.is_delivered
             
         for item in order.items.all():
             item.has_return = item.returns.exists()
