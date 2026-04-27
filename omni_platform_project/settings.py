@@ -138,3 +138,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/'
+
+AUTHENTICATION_BACKENDS = [
+    'users.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Email Backend for Password Reset (Console for development)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
