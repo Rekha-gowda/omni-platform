@@ -20,7 +20,20 @@ def product_list(request):
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    related_products = Product.objects.filter(category=product.category).exclude(id=product.id)[:10]
+    # Filter shows to only include future ones
+    # (Note: This comment seems leftover or from a copy-paste in your original code, 
+    # but I'll keep the logic focused on products)
+    
+    related_products = Product.objects.filter(category=product.category).exclude(id=product.id)
+    
+    # Try to find products with the same color first, then others in the same category
+    if product.color:
+        same_color = list(related_products.filter(color__icontains=product.color)[:4])
+        others = list(related_products.exclude(color__icontains=product.color)[:6])
+        related_products = same_color + others
+    else:
+        related_products = list(related_products[:10])
+        
     return render(request, 'shopping/product_detail.html', {'product': product, 'related_products': related_products})
 
 @login_required
