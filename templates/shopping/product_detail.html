@@ -14,7 +14,28 @@
                 <h1 class="fw-bold text-primary">{{ product.name }}</h1>
                 <h3 class="text-success mb-4">₹{{ product.price }}</h3>
                 <p class="lead">{{ product.description }}</p>
-                <p class="text-muted"><strong>Stock Available:</strong> {{ product.stock }}</p>
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <p class="text-muted mb-1 small uppercase fw-bold">Stock Available</p>
+                        <p class="fw-bold">{{ product.stock }}</p>
+                    </div>
+                    {% if product.color %}
+                    <div class="col-6">
+                        <p class="text-muted mb-1 small uppercase fw-bold">Color</p>
+                        <p class="fw-bold">{{ product.color }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if product.available_sizes %}
+                <div class="mb-4">
+                    <p class="text-muted mb-2 small uppercase fw-bold">Available Sizes</p>
+                    <div class="d-flex gap-2">
+                        {% for size in product.available_sizes.split %}
+                        <span class="badge bg-light text-dark border rounded-pill px-3 py-2">{{ size|cut:"," }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
                 <div class="mt-4 d-flex gap-2 flex-wrap">
                     <a href="{% url 'buy_product' product.pk %}" class="btn btn-lg btn-primary rounded-pill px-5">Buy Now</a>
                     {% if "clothing_" in product.category %}

@@ -3,7 +3,9 @@
 <div class="container py-5 d-flex flex-column align-items-center justify-content-center" style="min-height: 60vh;">
     <div class="glass-card text-center border-success" style="width: 100%; max-width: 600px;">
         <div class="display-1 text-success mb-3">✅</div>
-        <h1 class="fw-bold text-success mb-3">Payment Successful!</h1>
+        <h1 class="fw-bold text-success mb-1">Order Confirmed!</h1>
+        <div class="badge bg-success rounded-pill px-3 py-1 mb-3">Payment Successful</div>
+        
         <div class="alert alert-success my-4">
             <h5 class="fw-bold mb-3">Transaction Details:</h5>
             <p class="mb-1"><strong>Service:</strong> {{ module }}</p>
@@ -14,16 +16,16 @@
         </div>
         <p class="text-muted mb-4">Your order/booking has been confirmed. You can view it in your history.</p>
         <div class="d-grid gap-3 d-sm-flex justify-content-center">
-            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-md rounded-pill px-4 fw-bold">Return to Index Page</a>
+            <a href="{% url 'unified_history' %}" class="btn btn-primary btn-md rounded-pill px-4 fw-bold">View History</a>
             
             {% if module == 'Shopping' %}
-            <a href="{% url 'product_list' %}" class="btn btn-success btn-md rounded-pill px-4 fw-bold">Shop More Products</a>
+            <a href="{% url 'product_list' %}" class="btn btn-outline-success btn-md rounded-pill px-4 fw-bold">Shop More Products</a>
             {% elif module == 'Food' %}
-            <a href="{% url 'restaurant_list' %}" class="btn btn-warning btn-md rounded-pill px-4 fw-bold">Order More Food</a>
+            <a href="{% url 'restaurant_list' %}" class="btn btn-outline-warning btn-md rounded-pill px-4 fw-bold">Order More Food</a>
             {% elif module == 'Movies' %}
-            <a href="{% url 'movie_list' %}" class="btn btn-danger btn-md rounded-pill px-4 fw-bold">Book More Movies</a>
+            <a href="{% url 'movie_list' %}" class="btn btn-outline-danger btn-md rounded-pill px-4 fw-bold">Book More Movies</a>
             {% elif module == 'Travellers' %}
-            <a href="{% url 'bus_list' %}" class="btn btn-primary btn-md rounded-pill px-4 fw-bold">Book More Travels</a>
+            <a href="{% url 'bus_list' %}" class="btn btn-outline-primary btn-md rounded-pill px-4 fw-bold">Book More Travels</a>
             {% endif %}
 
             {% if module in 'Movies,Travellers' and ref %}

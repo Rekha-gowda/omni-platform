@@ -7,9 +7,18 @@
             <p class="mb-0 text-center">Paying for <strong>{{ module }}</strong></p>
             <h3 class="text-center fw-bold mt-2">Total Amount: ₹{{ amount }}</h3>
         </div>
+        
+        <!-- Mobile UPI Deep Link Section -->
+        <div class="d-block d-md-none mb-4">
+            <a href="upi://pay?pa=REKHA@UPI&pn=OmniPlatform&am={{ amount }}&cu=INR&tr={{ ref }}" class="btn btn-success w-100 rounded-pill py-3 fw-bold fs-5 mb-2">
+                <i class="fas fa-mobile-alt me-2"></i> Pay via UPI App (PhonePe / GPay)
+            </a>
+            <p class="text-center small text-muted">Click above to open your default payment app.</p>
+        </div>
+
         <form method="post" action="{% url 'payment_confirmation' %}">
             {% csrf_token %}
-            <h5 class="mb-3 mt-4">Select Payment Method:</h5>
+            <h5 class="mb-3 mt-4">Other Payment Methods:</h5>
             <div class="form-check mb-2">
                 <input class="form-check-input" type="radio" name="payment_method" id="upi" value="UPI" checked>
                 <label class="form-check-label" for="upi">UPI / GPay / PhonePe</label>
