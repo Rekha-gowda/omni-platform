@@ -75,6 +75,8 @@
                         <i class="bi bi-person-circle me-1"></i> {{ user.username }}
                     </a>
                     <ul class="dropdown-menu border-0 shadow-lg" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item fw-bold text-accent" href="{% url 'unified_history' %}"><i class="bi bi-person-badge"></i> My Profile & Activity</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="{% url 'shopping_history' %}">Shopping Orders</a></li>
                         <li><a class="dropdown-item" href="{% url 'foods_history' %}">Food Orders</a></li>
                         <li><a class="dropdown-item" href="{% url 'ticket_history' %}">Movie Tickets</a></li>
@@ -132,6 +134,18 @@
         <i class="bi bi-film"></i>
         <span>Movies</span>
     </a>
+    
+    {% if user.is_authenticated %}
+    <a href="{% url 'unified_history' %}" class="bottom-nav-item {% if 'history' in request.path %}active{% endif %}">
+        <i class="bi bi-person"></i>
+        <span>Profile</span>
+    </a>
+    {% else %}
+    <a href="{% url 'login' %}" class="bottom-nav-item">
+        <i class="bi bi-door-open"></i>
+        <span>Login</span>
+    </a>
+    {% endif %}
 
 </div>
 

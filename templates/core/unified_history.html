@@ -2,8 +2,21 @@
 
 {% block content %}
 <div class="container py-4">
+    <div class="glass-card p-4 mb-4 border-0">
+        <div class="d-flex align-items-center gap-3">
+            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.8rem;">
+                {{ user.username.0|upper }}
+            </div>
+            <div>
+                <h3 class="fw-bold m-0">{{ user.username }}</h3>
+                <p class="text-muted m-0"><i class="bi bi-envelope"></i> {{ user.email }}</p>
+                <div class="mt-2 text-muted small"><i class="bi bi-calendar-check"></i> Member since {{ user.date_joined|date:"M Y" }}</div>
+            </div>
+        </div>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold m-0"><i class="bi bi-clock-history me-2"></i>Activity History</h2>
+        <h4 class="fw-bold m-0"><i class="bi bi-clock-history me-2"></i>Recent Activity</h4>
     </div>
 
     {% if not activities %}
