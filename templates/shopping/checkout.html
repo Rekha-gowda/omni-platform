@@ -130,7 +130,7 @@
 </div>
 
 <script>
-    const basePrice = {{ cart.get_total }};
+    const basePrice = parseFloat("{{ cart.get_total }}");
     function updateTotal() {
         const isFast = document.getElementById('is_fast_delivery').checked;
         const total = isFast ? basePrice + 50 : basePrice;
