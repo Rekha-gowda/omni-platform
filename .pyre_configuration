@@ -1,9 +1,9 @@
 {
   "source_directories": [
-    "."
+    "/home/user/omni_platform"
   ],
   "search_path": [
-    ".venv/lib/python3.10/site-packages"
+    "/home/user/omni_platform/.venv/lib/python3.10/site-packages"
   ],
   "exclude": [
     ".*/migrations/.*",
