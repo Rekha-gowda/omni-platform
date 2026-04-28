@@ -6,26 +6,24 @@
         <h1 class="fw-bold text-success mb-1">Order Confirmed!</h1>
         <div class="badge bg-success rounded-pill px-3 py-1 mb-3">Payment Successful</div>
         
-        <div class="alert alert-success my-4">
-            <h5 class="fw-bold mb-3">Transaction Details:</h5>
-            <p class="mb-1"><strong>Service:</strong> {{ module }}</p>
-            <p class="mb-1"><strong>Amount Paid:</strong> ₹{{ amount }}</p>
+        <div class="alert alert-success my-4 border-0 shadow-sm" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);">
+            <h5 class="fw-bold mb-3 fst-italic text-success" style="font-family: 'Outfit', sans-serif;">Transaction Details</h5>
+            <p class="mb-1"><span class="fw-semibold text-dark">Service:</span> <span class="fst-italic text-secondary">{{ module }}</span></p>
+            <p class="mb-1"><span class="fw-semibold text-dark">Amount Paid:</span> <span class="fst-italic text-secondary">₹{{ amount }}</span></p>
             {% if ref %}
-            <p class="mb-0"><strong>Reference:</strong> {{ ref }}</p>
+            <p class="mb-0"><span class="fw-semibold text-dark">Reference:</span> <span class="fst-italic text-secondary">{{ ref }}</span></p>
             {% endif %}
         </div>
-        <p class="text-muted mb-4">Your order/booking has been confirmed. You can view it in your history.</p>
-        <div class="d-grid gap-3 d-sm-flex justify-content-center">
-            <a href="{% url 'unified_history' %}" class="btn btn-primary btn-md rounded-pill px-4 fw-bold">View History</a>
-            
+        <p class="text-muted mb-4 fst-italic fs-5 text-gradient" style="letter-spacing: 0.5px;">Your transaction has been securely confirmed. Thank you!</p>
+        <div class="d-grid gap-3 d-sm-flex justify-content-center mt-2">
             {% if module == 'Shopping' %}
-            <a href="{% url 'product_list' %}" class="btn btn-outline-success btn-md rounded-pill px-4 fw-bold">Shop More Products</a>
-            {% elif module == 'Food' %}
-            <a href="{% url 'restaurant_list' %}" class="btn btn-outline-warning btn-md rounded-pill px-4 fw-bold">Order More Food</a>
+            <a href="{% url 'product_list' %}" class="btn btn-primary btn-md rounded-pill px-4 fw-bold shadow-sm">Shop More Products</a>
+            {% elif module == 'Food' or module == 'Foods' %}
+            <a href="{% url 'restaurant_list' %}" class="btn btn-primary btn-md rounded-pill px-4 fw-bold shadow-sm">Order More Food</a>
             {% elif module == 'Movies' %}
-            <a href="{% url 'movie_list' %}" class="btn btn-outline-danger btn-md rounded-pill px-4 fw-bold">Book More Movies</a>
+            <a href="{% url 'movie_list' %}" class="btn btn-primary btn-md rounded-pill px-4 fw-bold shadow-sm">Book More Movies</a>
             {% elif module == 'Travellers' %}
-            <a href="{% url 'bus_list' %}" class="btn btn-outline-primary btn-md rounded-pill px-4 fw-bold">Book More Travels</a>
+            <a href="{% url 'bus_list' %}" class="btn btn-primary btn-md rounded-pill px-4 fw-bold shadow-sm">Book More Travels</a>
             {% endif %}
 
             {% if module in 'Movies,Travellers' and ref %}
