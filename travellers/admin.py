@@ -13,9 +13,13 @@ class TripAdmin(admin.ModelAdmin):
 
 @admin.register(BusBooking)
 class BusBookingAdmin(admin.ModelAdmin):
-    list_display = ('user', 'trip', 'no_of_seats', 'total_cost', 'booking_time', 'customer_name', 'customer_phone', 'payment_method')
+    list_display = ('user', 'user_email', 'trip', 'no_of_seats', 'total_cost', 'booking_time', 'customer_name', 'customer_phone', 'payment_method')
     list_filter = ('trip__bus__name', 'booking_time', 'payment_method')
-    search_fields = ('user__username', 'customer_name', 'customer_phone', 'trip__bus__name')
+    search_fields = ('user__username', 'user__email', 'customer_name', 'customer_phone', 'trip__bus__name')
+
+    def user_email(self, obj):
+        return obj.user.email
+    user_email.short_description = 'User Email'
 @admin.register(BusSeat)
 class BusSeatAdmin(admin.ModelAdmin):
     list_display = ('trip', 'seat_identifier', 'is_booked', 'locked_by', 'lock_expires_at')

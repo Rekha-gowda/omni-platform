@@ -19,12 +19,16 @@ class ShoppingReturnInline(admin.TabularInline):
 
 @admin.register(ShoppingOrder)
 class ShoppingOrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'delivery_name', 'delivery_phone', 'total_amount', 'status', 'current_location', 'agent_phone', 'expected_delivery', 'is_paid', 'created_at')
+    list_display = ('id', 'user', 'user_email', 'delivery_name', 'delivery_phone', 'total_amount', 'status', 'current_location', 'agent_phone', 'expected_delivery', 'is_paid', 'created_at')
     list_filter = ('is_paid', 'status', 'created_at')
-    search_fields = ('id', 'user__username', 'delivery_name', 'delivery_phone', 'current_location', 'agent_phone')
+    search_fields = ('id', 'user__username', 'user__email', 'delivery_name', 'delivery_phone', 'current_location', 'agent_phone')
     inlines = [ShoppingOrderItemInline]
     fields = ('user', 'total_amount', 'status', 'current_location', 'agent_phone', 'expected_delivery', 'is_paid', 'delivery_name', 'delivery_address', 'delivery_phone', 'delivered_at', 'is_fast_delivery', 'payment_method')
     readonly_fields = ('created_at', 'updated_at')
+
+    def user_email(self, obj):
+        return obj.user.email
+    user_email.short_description = 'User Email'
 
 @admin.register(ShoppingReturn)
 class ShoppingReturnAdmin(admin.ModelAdmin):

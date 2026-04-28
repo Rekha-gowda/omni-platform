@@ -19,9 +19,13 @@ class ShowAdmin(admin.ModelAdmin):
 
 @admin.register(MovieTicket)
 class MovieTicketAdmin(admin.ModelAdmin):
-    list_display = ('user', 'show', 'seats', 'total_price', 'booking_time', 'customer_name', 'customer_phone', 'payment_method')
+    list_display = ('user', 'user_email', 'show', 'seats', 'total_price', 'booking_time', 'customer_name', 'customer_phone', 'payment_method')
     list_filter = ('show__movie__title', 'booking_time', 'payment_method')
-    search_fields = ('user__username', 'customer_name', 'customer_phone', 'show__movie__title')
+    search_fields = ('user__username', 'user__email', 'customer_name', 'customer_phone', 'show__movie__title')
+
+    def user_email(self, obj):
+        return obj.user.email
+    user_email.short_description = 'User Email'
 @admin.register(MovieSeat)
 class MovieSeatAdmin(admin.ModelAdmin):
     list_display = ('show', 'seat_identifier', 'is_booked', 'locked_by', 'lock_expires_at')

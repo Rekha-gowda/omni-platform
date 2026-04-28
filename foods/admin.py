@@ -19,11 +19,15 @@ class FoodComplaintInline(admin.TabularInline):
 
 @admin.register(FoodOrder)
 class FoodOrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'delivery_name', 'delivery_phone', 'restaurant', 'total_amount', 'status', 'created_at')
+    list_display = ('id', 'user', 'user_email', 'delivery_name', 'delivery_phone', 'restaurant', 'total_amount', 'status', 'created_at')
     list_filter = ('status', 'created_at', 'restaurant')
-    search_fields = ('id', 'user__username', 'delivery_name', 'delivery_phone')
+    search_fields = ('id', 'user__username', 'user__email', 'delivery_name', 'delivery_phone')
     inlines = [FoodComplaintInline]
     readonly_fields = ('created_at',)
+
+    def user_email(self, obj):
+        return obj.user.email
+    user_email.short_description = 'User Email'
 
 @admin.register(FoodComplaint)
 class FoodComplaintAdmin(admin.ModelAdmin):
