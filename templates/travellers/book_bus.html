@@ -89,5 +89,23 @@
             submitBtn.onclick = null;
         }
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (!isMobile) {
+            const upiRadio = document.getElementById('pay_upi');
+            if (upiRadio) {
+                upiRadio.disabled = true;
+                upiRadio.parentElement.style.display = 'none';
+                
+                const codRadio = document.getElementById('pay_cod');
+                codRadio.checked = true;
+                codRadio.parentElement.classList.remove('col-6');
+                codRadio.parentElement.classList.add('col-12');
+                
+                toggleUPI(false);
+            }
+        }
+    });
 </script>
 {% endblock %}
