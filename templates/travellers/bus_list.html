@@ -10,7 +10,8 @@
             <div class="col-md-10">
                 <div class="input-group input-group-lg">
                     <span class="input-group-text bg-transparent border-success text-success"><i class="fas fa-search"></i></span>
-                    <input type="text" name="q" class="form-control border-success" placeholder="Search by Bus name, Source, or Destination..." value="{{ query }}">
+                    <input type="text" name="q" class="form-control border-success" placeholder="Search by Bus name, Source, or Destination..." value="{{ query }}" id="searchInputBus">
+                    <button class="btn btn-success border-success" type="button" onclick="startVoiceRecognition('searchInputBus')"><i class="bi bi-mic"></i></button>
                 </div>
             </div>
             <div class="col-md-2">

@@ -5,7 +5,8 @@
         <h1 class="fw-800 mb-0 text-gradient">Dining</h1>
         <form method="get" action="{% url 'restaurant_list' %}" class="d-flex" style="max-width: 500px; width: 100%;">
             <div class="input-group shadow-sm rounded-pill overflow-hidden">
-                <input type="text" name="q" class="form-control border-0 ps-4" placeholder="Search restaurants..." value="{{ query|default:'' }}">
+                <input type="text" name="q" class="form-control border-0 ps-4" placeholder="Search restaurants..." value="{{ query|default:'' }}" id="searchInputFood">
+                <button type="button" class="btn btn-premium px-3" onclick="startVoiceRecognition('searchInputFood')"><i class="bi bi-mic"></i></button>
                 <button type="submit" class="btn btn-premium px-4">
                     <i class="bi bi-search"></i>
                 </button>

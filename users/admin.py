@@ -13,7 +13,7 @@ class ShoppingOrderInline(admin.TabularInline):
     extra = 0
     show_change_link = True
     fields = ('total_amount', 'status', 'created_at')
-    readonly_fields = ('total_amount', 'status', 'created_at')
+    readonly_fields = ('total_amount', 'created_at')
     can_delete = False
 
 class FoodOrderInline(admin.TabularInline):
@@ -21,7 +21,7 @@ class FoodOrderInline(admin.TabularInline):
     extra = 0
     show_change_link = True
     fields = ('restaurant', 'total_amount', 'status', 'created_at')
-    readonly_fields = ('restaurant', 'total_amount', 'status', 'created_at')
+    readonly_fields = ('restaurant', 'total_amount', 'created_at')
     can_delete = False
 
 class MovieTicketInline(admin.TabularInline):
@@ -29,7 +29,7 @@ class MovieTicketInline(admin.TabularInline):
     extra = 0
     show_change_link = True
     fields = ('show', 'seats', 'total_price', 'booking_time')
-    readonly_fields = ('show', 'seats', 'total_price', 'booking_time')
+    readonly_fields = ('show', 'total_price', 'booking_time')
     can_delete = False
 
 class BusBookingInline(admin.TabularInline):
@@ -37,7 +37,7 @@ class BusBookingInline(admin.TabularInline):
     extra = 0
     show_change_link = True
     fields = ('trip', 'no_of_seats', 'total_cost', 'booking_time')
-    readonly_fields = ('trip', 'no_of_seats', 'total_cost', 'booking_time')
+    readonly_fields = ('trip', 'total_cost', 'booking_time')
     can_delete = False
 
 admin.site.unregister(Group)

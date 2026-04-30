@@ -35,7 +35,10 @@
                                 {% csrf_token %}
                                 <div class="mb-2 text-start">
                                     <label class="form-label">Issue Reason</label>
-                                    <textarea name="reason_text" class="form-control form-control-sm" rows="2" required></textarea>
+                                    <div class="input-group">
+                                        <textarea name="reason_text" class="form-control form-control-sm" rows="2" required id="complaintReason{{ order.id }}"></textarea>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="startVoiceRecognition('complaintReason{{ order.id }}')"><i class="bi bi-mic"></i></button>
+                                    </div>
                                 </div>
                                 <div class="mb-2 text-start">
                                     <label class="form-label">Upload Image Proof</label>
@@ -64,7 +67,10 @@
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label">Review</label>
-                                    <textarea name="review_text" class="form-control form-control-sm" rows="2" required></textarea>
+                                    <div class="input-group">
+                                        <textarea name="review_text" class="form-control form-control-sm" rows="2" required id="foodReview{{ order.id }}"></textarea>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="startVoiceRecognition('foodReview{{ order.id }}')"><i class="bi bi-mic"></i></button>
+                                    </div>
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label">Upload Picture (Optional)</label>

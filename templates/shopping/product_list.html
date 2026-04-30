@@ -7,11 +7,12 @@
 
     <!-- Mobile Search -->
     <div class="d-md-none mb-4">
-        <form method="get" action="{% url 'product_list' %}" class="position-relative">
-            <input type="text" name="q" class="form-control rounded-pill ps-4 border-0 shadow-sm py-3" placeholder="Search products..." value="{{ query|default:'' }}">
-            <button type="submit" class="btn btn-premium rounded-pill position-absolute end-0 top-0 h-100 px-4">
-                <i class="bi bi-search"></i>
-            </button>
+        <form method="get" action="{% url 'product_list' %}">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden">
+                <input type="text" name="q" class="form-control border-0 py-3 ps-4" placeholder="Search products..." value="{{ query|default:'' }}" id="searchInputProductMobile">
+                <button type="button" class="btn btn-premium px-3" onclick="startVoiceRecognition('searchInputProductMobile')"><i class="bi bi-mic"></i></button>
+                <button type="submit" class="btn btn-premium px-4"><i class="bi bi-search"></i></button>
+            </div>
         </form>
     </div>
 
@@ -23,9 +24,12 @@
             {% endfor %}
         </div>
         <div class="col-md-4 d-none d-md-block">
-            <form method="get" action="{% url 'product_list' %}" class="d-flex">
-                <input type="text" name="q" class="form-control rounded-pill me-2 border-0 shadow-sm ps-4" placeholder="Search products..." value="{{ query|default:'' }}">
-                <button type="submit" class="btn btn-premium rounded-pill px-4">Search</button>
+            <form method="get" action="{% url 'product_list' %}">
+                <div class="input-group shadow-sm rounded-pill overflow-hidden">
+                    <input type="text" name="q" class="form-control border-0 py-2 ps-4" placeholder="Search products..." value="{{ query|default:'' }}" id="searchInputProductDesktop">
+                    <button type="button" class="btn btn-premium px-3" onclick="startVoiceRecognition('searchInputProductDesktop')"><i class="bi bi-mic"></i></button>
+                    <button type="submit" class="btn btn-premium px-4">Search</button>
+                </div>
             </form>
         </div>
     </div>

@@ -8,7 +8,8 @@
                 <input type="hidden" name="lat" id="latInput">
                 <input type="hidden" name="lon" id="lonInput">
                 <div class="input-group">
-                    <input class="form-control rounded-start-pill ps-4" type="search" name="q" value="{{ query }}" placeholder="Search movies..." aria-label="Search">
+                    <input class="form-control rounded-start-pill ps-4" type="search" name="q" value="{{ query }}" placeholder="Search movies..." aria-label="Search" id="searchInputMovie">
+                    <button class="btn btn-premium" type="button" onclick="startVoiceRecognition('searchInputMovie')"><i class="bi bi-mic"></i></button>
                     <button class="btn btn-premium rounded-end-pill" type="submit"><i class="bi bi-search"></i></button>
                     <button class="btn btn-outline-dark rounded-pill ms-2 d-none d-sm-block" type="button" onclick="getNearbyTheaters()" id="locationBtn">
                         📍 Nearby

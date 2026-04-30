@@ -144,5 +144,8 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+SESSION_COOKIE_AGE = 31536000  # 1 year
+SESSION_SAVE_EVERY_REQUEST = True
+
 # Email Backend for Password Reset (Console for development)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -190,7 +190,26 @@ def submit_return(request, item_id):
         return_type = request.POST.get('return_type')
         reason_text = request.POST.get('reason_text')
         image = request.FILES.get('image')
+        
+        if image and item.product.image:
+            from PIL import Image
+            import imagehash
+            try:
+                uploaded_img = Image.open(image)
+                product_img = Image.open(item.product.image.path)
+                hash0 = imagehash.average_hash(uploaded_img)
+                hash1 = imagehash.average_hash(product_img)
+                cutoff = 30
+                if hash0 - hash1 > cutoff:
+                    from django.contrib import messages
+                    messages.error(request, 'The uploaded photo does not look similar to the product. Please upload a relevant photo.')
+                    return redirect('shopping_history')
+            except Exception as e:
+                pass
+
         ShoppingReturn.objects.create(order_item=item, return_type=return_type, reason_text=reason_text, image=image)
+        from django.contrib import messages
+        messages.success(request, 'Return request submitted successfully.')
     return redirect('shopping_history')
 
 @login_required

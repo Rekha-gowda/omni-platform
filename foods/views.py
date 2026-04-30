@@ -153,7 +153,26 @@ def submit_complaint(request, order_id):
         order = get_object_or_404(FoodOrder, id=order_id, user=request.user)
         reason_text = request.POST.get('reason_text')
         image = request.FILES.get('image')
+        
+        if image and order.restaurant.image:
+            from PIL import Image
+            import imagehash
+            try:
+                uploaded_img = Image.open(image)
+                product_img = Image.open(order.restaurant.image.path)
+                hash0 = imagehash.average_hash(uploaded_img)
+                hash1 = imagehash.average_hash(product_img)
+                cutoff = 30 # Forgiving cutoff for general similarity
+                if hash0 - hash1 > cutoff:
+                    from django.contrib import messages
+                    messages.error(request, 'The uploaded photo does not look similar to your order. Please upload a relevant photo.')
+                    return redirect('foods_history')
+            except Exception as e:
+                pass
+                
         FoodComplaint.objects.create(order=order, reason_text=reason_text, image=image)
+        from django.contrib import messages
+        messages.success(request, 'Complaint submitted successfully.')
     return redirect('foods_history')
 
 @login_required

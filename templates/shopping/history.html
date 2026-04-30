@@ -86,8 +86,9 @@
                                                     <option value="Replace">Replace</option>
                                                 </select>
                                             </div>
-                                            <div class="mb-2">
-                                                <textarea name="reason_text" class="form-control form-control-sm" rows="2" placeholder="Reason..." required></textarea>
+                                            <div class="mb-2 input-group">
+                                                <textarea name="reason_text" class="form-control form-control-sm" rows="2" placeholder="Reason..." required id="returnReason{{ item.id }}"></textarea>
+                                                <button type="button" class="btn btn-outline-secondary" onclick="startVoiceRecognition('returnReason{{ item.id }}')"><i class="bi bi-mic"></i></button>
                                             </div>
                                             <div class="mb-2">
                                                 <input type="file" name="image" class="form-control form-control-sm" accept="image/*" required>
@@ -106,8 +107,9 @@
                                                 <label class="small fw-bold">Rating:</label>
                                                 <input type="number" name="rating" class="form-control form-control-sm w-25" min="1" max="5" value="5" required>
                                             </div>
-                                            <div class="mb-2">
-                                                <textarea name="review_text" class="form-control form-control-sm" rows="2" placeholder="Your review..." required></textarea>
+                                            <div class="mb-2 input-group">
+                                                <textarea name="review_text" class="form-control form-control-sm" rows="2" placeholder="Your review..." required id="reviewText{{ item.product.id }}"></textarea>
+                                                <button type="button" class="btn btn-outline-secondary" onclick="startVoiceRecognition('reviewText{{ item.product.id }}')"><i class="bi bi-mic"></i></button>
                                             </div>
                                             <div class="mb-2">
                                                 <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
