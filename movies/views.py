@@ -13,6 +13,13 @@ def movie_list(request):
         movies = Movie.objects.filter(title__icontains=query)
     else:
         movies = Movie.objects.all()
+        
+    lat = request.GET.get('lat')
+    lon = request.GET.get('lon')
+    if lat and lon:
+        # Simulate nearby theaters by returning movies that have active shows
+        movies = movies.filter(shows__isnull=False).distinct()
+        
     return render(request, 'movies/movie_list.html', {'movies': movies, 'query': query})
 
 def movie_detail(request, pk):

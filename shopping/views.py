@@ -152,9 +152,14 @@ def order_history(request):
         if days_passed >= delivery_threshold:
             if order.status == 'Pending':
                 order.status = 'Delivered'
-                order.save(update_fields=['status'])
+                order.delivered_at = now
+                order.save(update_fields=['status', 'delivered_at'])
             order.is_delivered = (order.status == 'Delivered')
-            order.can_return = (order.is_delivered and days_passed <= (delivery_threshold + 3))
+            
+            # Days since actual delivery:
+            delivered_time = order.delivered_at or order.created_at + datetime.timedelta(days=delivery_threshold)
+            days_since_delivery = (now - delivered_time).days
+            order.can_return = (order.is_delivered and days_since_delivery <= 3)
             order.can_review = order.is_delivered
         else:
             if order.status == 'Pending':
@@ -169,16 +174,13 @@ def order_history(request):
             
             # Per-item return logic
             if order.is_delivered:
-                if item.product.category.startswith('clothing_'):
-                    # Clothing items have a 3-day return window after delivery (days 7 to 10)
-                    item.can_return = (days_passed >= 7 and days_passed <= 10)
-                else:
-                    # Non-clothing items (like grocery) have no return window after delivery
-                    item.can_return = False
+                # 3 days after delivered products
+                item.can_return = order.can_return
             else:
                 item.can_return = False
             
-            item.can_review = order.is_delivered
+            item.can_review = (order.is_delivered and order.can_return) # 3 days after delivered for reviews
+
             
     return render(request, 'shopping/history.html', {'orders': orders})
 

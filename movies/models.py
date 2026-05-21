@@ -16,6 +16,7 @@ class Movie(models.Model):
 class Theater(models.Model):
     name = models.CharField(max_length=200)
     address = models.TextField()
+    image = models.ImageField(upload_to='theaters/', blank=True, null=True)
     location_url = models.URLField(blank=True, null=True, help_text="Google Maps link or similar")
     
     def __str__(self):

@@ -26,6 +26,26 @@ class ShoppingOrderAdmin(admin.ModelAdmin):
     fields = ('user', 'total_amount', 'status', 'current_location', 'agent_phone', 'expected_delivery', 'is_paid', 'delivery_name', 'delivery_address', 'delivery_phone', 'delivered_at', 'is_fast_delivery', 'payment_method')
     readonly_fields = ('created_at', 'updated_at')
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        from django.utils import timezone
+        import datetime
+        now = timezone.now()
+        for order in qs:
+            days_passed = (now - order.created_at).days
+            delivery_threshold = 3 if order.is_fast_delivery else 7
+            
+            if days_passed >= delivery_threshold:
+                if order.status == 'Pending':
+                    order.status = 'Delivered'
+                    order.delivered_at = now
+                    order.save(update_fields=['status', 'delivered_at'])
+            else:
+                if order.status == 'Pending' and not order.expected_delivery:
+                    order.expected_delivery = order.created_at + datetime.timedelta(days=delivery_threshold)
+                    order.save(update_fields=['expected_delivery'])
+        return qs
+
     def user_email(self, obj):
         return obj.user.email
     user_email.short_description = 'User Email'
