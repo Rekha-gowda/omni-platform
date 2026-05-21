@@ -7,16 +7,44 @@ from .models import Product, ShoppingOrder, ShoppingOrderItem, ShoppingCart, Sho
 def product_list(request):
     category = request.GET.get('category')
     query = request.GET.get('q')
+    color = request.GET.get('color')
+    sub_category = request.GET.get('sub_category')
+    
     if category:
         products = Product.objects.filter(category=category)
     else:
         products = Product.objects.all()
         
+    if color:
+        products = products.filter(color__icontains=color)
+        
+    if sub_category:
+        products = products.filter(name__icontains=sub_category)
+        
     if query:
         products = products.filter(name__icontains=query)
         
     categories = [{'key': k, 'label': v} for k, v in Product._meta.get_field('category').choices]
-    return render(request, 'shopping/product_list.html', {'products': products, 'categories': categories, 'selected_category': category, 'query': query})
+    
+    colors = []
+    if category and category.startswith('clothing_'):
+        colors = Product.objects.filter(category=category).exclude(color__isnull=True).exclude(color='').values_list('color', flat=True).distinct()
+        colors = list(set([c.strip().title() for c in colors]))
+        
+    sub_categories = []
+    if category == 'grocery':
+        sub_categories = ['Salt', 'Sugar', 'Rice', 'Dal', 'Oil', 'Snacks', 'Beverages', 'Spices']
+        
+    return render(request, 'shopping/product_list.html', {
+        'products': products, 
+        'categories': categories, 
+        'selected_category': category, 
+        'query': query,
+        'colors': colors,
+        'selected_color': color,
+        'sub_categories': sub_categories,
+        'selected_sub': sub_category
+    })
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
