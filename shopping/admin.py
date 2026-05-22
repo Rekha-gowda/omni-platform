@@ -10,7 +10,7 @@ class ProductAdmin(admin.ModelAdmin):
 class ShoppingOrderItemInline(admin.TabularInline):
     model = ShoppingOrderItem
     extra = 0
-    readonly_fields = ('product', 'quantity', 'price', 'size')
+    readonly_fields = ('product', 'quantity', 'price', 'quantity_unit')
 
 class ShoppingReturnInline(admin.TabularInline):
     model = ShoppingReturn

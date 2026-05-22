@@ -59,7 +59,7 @@
                                 <div class="flex-grow-1 min-w-0">
                                     <div class="fw-bold text-truncate">{{ item.product.name }}</div>
                                     <div class="small text-muted">{{ item.quantity }}x ₹{{ item.price }}</div>
-                                    {% if item.size %}<div class="badge bg-light text-dark border-0">Size: {{ item.size }}</div>{% endif %}
+                                    {% if item.quantity_unit %}<div class="badge bg-light text-dark border-0">Unit: {{ item.quantity_unit }}</div>{% endif %}
                                 </div>
                                 <div class="d-flex flex-column justify-content-center gap-1">
                                     {% if item.has_return %}

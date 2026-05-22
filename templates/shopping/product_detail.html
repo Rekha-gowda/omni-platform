@@ -19,42 +19,29 @@
                         <p class="text-muted mb-1 small uppercase fw-bold">Stock Available</p>
                         <p class="fw-bold">{{ product.stock }}</p>
                     </div>
-                    {% if product.color %}
+                    {% if product.item_name %}
                     <div class="col-6">
-                        <p class="text-muted mb-1 small uppercase fw-bold">Color</p>
-                        <p class="fw-bold">{{ product.color }}</p>
+                        <p class="text-muted mb-1 small uppercase fw-bold">Item Name</p>
+                        <p class="fw-bold">{{ product.item_name }}</p>
                     </div>
                     {% endif %}
                 </div>
-                {% if product.available_sizes %}
+                {% if product.available_quantities %}
                 <div class="mb-4">
-                    <p class="text-muted mb-2 small uppercase fw-bold">Available Sizes</p>
+                    <p class="text-muted mb-2 small uppercase fw-bold">Available Quantities</p>
                     <div class="d-flex gap-2">
-                        {% for size in product.available_sizes.split %}
-                        <span class="badge bg-light text-dark border rounded-pill px-3 py-2">{{ size|cut:"," }}</span>
+                        {% for qty in product.available_quantities.split %}
+                        <span class="badge bg-light text-dark border rounded-pill px-3 py-2">{{ qty|cut:"," }}</span>
                         {% endfor %}
                     </div>
                 </div>
                 {% endif %}
                 <div class="mt-4 d-flex gap-2 flex-wrap">
                     <a href="{% url 'buy_product' product.pk %}" class="btn btn-lg btn-primary rounded-pill px-5">Buy Now</a>
-                    {% if "clothing_" in product.category %}
+                    {% if "grocery" in product.category or "clothing_" in product.category %}
                     <form method="post" action="{% url 'add_to_cart' product.pk %}" class="d-flex gap-2">
                         {% csrf_token %}
-                        <select name="size" class="form-select w-auto rounded-pill" required>
-                            <option value="" selected disabled>Select Size</option>
-                            {% if product.category == 'clothing_kids' %}
-                            <option value="XS">XS</option>
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            {% else %}
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                            <option value="XXL">XXL</option>
-                            {% endif %}
-                        </select>
+                        <input type="text" name="quantity_unit" class="form-control rounded-pill" placeholder="Qty (1kg, L)" required>
                         <button type="submit" class="btn btn-lg btn-info text-white rounded-pill px-4">Add to Cart</button>
                     </form>
                     {% else %}

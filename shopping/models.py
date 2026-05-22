@@ -16,8 +16,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     stock = models.IntegerField(default=0)
-    color = models.CharField(max_length=50, blank=True, null=True, help_text="e.g. Red, Blue, Black")
-    available_sizes = models.CharField(max_length=100, blank=True, null=True, help_text="e.g. S, M, L, XL (Comma separated)")
+    item_name = models.CharField(max_length=50, blank=True, null=True, help_text="e.g. Salt, Soap, Shampoo")
+    available_quantities = models.CharField(max_length=100, blank=True, null=True, help_text="e.g. 500g, 1kg, 2 liters (Comma separated)")
 
     def __str__(self):
         return self.name
@@ -47,7 +47,7 @@ class ShoppingOrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    size = models.CharField(max_length=10, blank=True, null=True)
+    quantity_unit = models.CharField(max_length=20, blank=True, null=True)
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
@@ -62,7 +62,7 @@ class ShoppingCartItem(models.Model):
     cart = models.ForeignKey(ShoppingCart, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    size = models.CharField(max_length=10, blank=True, null=True)
+    quantity_unit = models.CharField(max_length=20, blank=True, null=True)
 
 class ShoppingReturn(models.Model):
     order_item = models.ForeignKey(ShoppingOrderItem, on_delete=models.CASCADE, related_name='returns')

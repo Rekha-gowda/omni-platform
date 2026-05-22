@@ -116,7 +116,7 @@
                 <h4 class="fw-bold mb-4">Order Summary</h4>
                 {% for item in cart.items.all %}
                 <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
-                    <span>{{ item.quantity }}x {{ item.product.name }}{% if item.size %} (Size: {{ item.size }}){% endif %}</span>
+                    <span>{{ item.quantity }}x {{ item.product.name }}{% if item.quantity_unit %} (Unit: {{ item.quantity_unit }}){% endif %}</span>
                     <span>₹{% widthratio item.product.price 1 item.quantity %}</span>
                 </div>
                 {% endfor %}

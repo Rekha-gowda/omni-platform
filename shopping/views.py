@@ -7,7 +7,7 @@ from .models import Product, ShoppingOrder, ShoppingOrderItem, ShoppingCart, Sho
 def product_list(request):
     category = request.GET.get('category')
     query = request.GET.get('q')
-    color = request.GET.get('color')
+    item_name = request.GET.get('item_name')
     sub_category = request.GET.get('sub_category')
     
     if category:
@@ -15,8 +15,8 @@ def product_list(request):
     else:
         products = Product.objects.all()
         
-    if color:
-        products = products.filter(color__icontains=color)
+    if item_name:
+        products = products.filter(item_name__icontains=item_name)
         
     if sub_category:
         products = products.filter(name__icontains=sub_category)
@@ -26,10 +26,10 @@ def product_list(request):
         
     categories = [{'key': k, 'label': v} for k, v in Product._meta.get_field('category').choices]
     
-    colors = []
-    if category and category.startswith('clothing_'):
-        colors = Product.objects.filter(category=category).exclude(color__isnull=True).exclude(color='').values_list('color', flat=True).distinct()
-        colors = list(set([c.strip().title() for c in colors]))
+    item_names = []
+    if category:
+        item_names = Product.objects.filter(category=category).exclude(item_name__isnull=True).exclude(item_name='').values_list('item_name', flat=True).distinct()
+        item_names = list(set([c.strip().title() for c in item_names]))
         
     sub_categories = []
     if category == 'grocery':
@@ -40,8 +40,8 @@ def product_list(request):
         'categories': categories, 
         'selected_category': category, 
         'query': query,
-        'colors': colors,
-        'selected_color': color,
+        'item_names': item_names,
+        'selected_item_name': item_name,
         'sub_categories': sub_categories,
         'selected_sub': sub_category
     })
@@ -54,11 +54,11 @@ def product_detail(request, pk):
     
     related_products = Product.objects.filter(category=product.category).exclude(id=product.id)
     
-    # Try to find products with the same color first, then others in the same category
-    if product.color:
-        same_color = list(related_products.filter(color__icontains=product.color)[:4])
-        others = list(related_products.exclude(color__icontains=product.color)[:6])
-        related_products = same_color + others
+    # Try to find products with the same item_name first, then others in the same category
+    if product.item_name:
+        same_item_name = list(related_products.filter(item_name__icontains=product.item_name)[:4])
+        others = list(related_products.exclude(item_name__icontains=product.item_name)[:6])
+        related_products = same_item_name + others
     else:
         related_products = list(related_products[:10])
         
@@ -74,7 +74,7 @@ def buy_product(request, pk):
         name = request.POST.get('delivery_name')
         address = request.POST.get('delivery_address')
         phone = request.POST.get('delivery_phone')
-        size = request.POST.get('size')
+        quantity_unit = request.POST.get('quantity_unit')
         is_fast = request.POST.get('is_fast_delivery') == 'on'
         payment_method = request.POST.get('payment_method', 'COD')
         
@@ -92,7 +92,7 @@ def buy_product(request, pk):
             is_fast_delivery=is_fast,
             payment_method=payment_method
         )
-        ShoppingOrderItem.objects.create(order=order, product=product, quantity=quantity, price=product.price, size=size)
+        ShoppingOrderItem.objects.create(order=order, product=product, quantity=quantity, price=product.price, quantity_unit=quantity_unit)
         
         total_str = f"{total:.2f}"
         if payment_method in ['UPI', 'Card']:
@@ -105,11 +105,11 @@ def add_to_cart(request, pk):
     product = get_object_or_404(Product, pk=pk)
     cart, _ = ShoppingCart.objects.get_or_create(user=request.user)
     
-    size = None
+    quantity_unit = None
     if request.method == 'POST':
-        size = request.POST.get('size')
+        quantity_unit = request.POST.get('quantity_unit')
         
-    item, created = ShoppingCartItem.objects.get_or_create(cart=cart, product=product, size=size)
+    item, created = ShoppingCartItem.objects.get_or_create(cart=cart, product=product, quantity_unit=quantity_unit)
     if not created:
         item.quantity += 1
         item.save()
@@ -157,7 +157,7 @@ def checkout_cart(request):
                 payment_method=payment_method
             )
             for item in cart.items.all():
-                ShoppingOrderItem.objects.create(order=order, product=item.product, quantity=item.quantity, price=item.product.price, size=item.size)
+                ShoppingOrderItem.objects.create(order=order, product=item.product, quantity=item.quantity, price=item.product.price, quantity_unit=item.quantity_unit)
                 
             cart.items.all().delete()
             

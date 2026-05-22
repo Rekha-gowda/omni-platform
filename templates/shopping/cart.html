@@ -13,7 +13,7 @@
                         {% endif %}
                         <div>
                             <h5 class="mb-0 fw-bold">{{ item.product.name }}</h5>
-                            <p class="text-muted mb-0">Qty: {{ item.quantity }} &times; ₹{{ item.product.price }}{% if item.size %} | Size: {{ item.size }}{% endif %}</p>
+                            <p class="text-muted mb-0">Qty: {{ item.quantity }} &times; ₹{{ item.product.price }}{% if item.quantity_unit %} | Unit: {{ item.quantity_unit }}{% endif %}</p>
                         </div>
                     </div>
                     <div class="d-flex align-items-center">
