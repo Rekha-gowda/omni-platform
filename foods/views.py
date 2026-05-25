@@ -155,9 +155,9 @@ def submit_complaint(request, order_id):
         image = request.FILES.get('image')
         
         if image and order.restaurant.image:
-            from PIL import Image
-            import imagehash
             try:
+                from PIL import Image
+                import imagehash
                 uploaded_img = Image.open(image)
                 product_img = Image.open(order.restaurant.image.path)
                 hash0 = imagehash.average_hash(uploaded_img)

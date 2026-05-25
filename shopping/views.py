@@ -222,9 +222,9 @@ def submit_return(request, item_id):
         image = request.FILES.get('image')
         
         if image and item.product.image:
-            from PIL import Image
-            import imagehash
             try:
+                from PIL import Image
+                import imagehash
                 uploaded_img = Image.open(image)
                 product_img = Image.open(item.product.image.path)
                 hash0 = imagehash.average_hash(uploaded_img)

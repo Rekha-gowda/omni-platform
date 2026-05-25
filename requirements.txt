@@ -10,3 +10,4 @@ reportlab==4.4.10
 python-bidi==0.4.2
 cloudinary==1.39.0
 django-cloudinary-storage==0.3.0
+ImageHash==4.3.1

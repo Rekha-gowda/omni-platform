@@ -81,7 +81,7 @@
                         
                         <div class="d-flex justify-content-end gap-2 mt-3">
                             {% if activity.type == 'shopping' %}
-                                <a href="{% url 'order_history' %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+                                <a href="{% url 'shopping_history' %}" class="btn btn-sm btn-outline-secondary">View Details</a>
                             {% elif activity.type == 'food' %}
                                 <a href="{% url 'foods_history' %}" class="btn btn-sm btn-outline-secondary">Track Order</a>
                             {% elif activity.type == 'movie' %}
