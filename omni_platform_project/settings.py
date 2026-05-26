@@ -130,22 +130,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-import urllib.parse
-raw_cloudinary_url = os.environ.get('CLOUDINARY_URL', '').strip().strip('\'"')
-
-if raw_cloudinary_url:
-    parsed_cloud_url = urllib.parse.urlparse(raw_cloudinary_url)
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': parsed_cloud_url.hostname,
-        'API_KEY': parsed_cloud_url.username,
-        'API_SECRET': parsed_cloud_url.password,
-    }
-else:
-    CLOUDINARY_STORAGE = {}
-
 STORAGES = {
     "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage" if raw_cloudinary_url else "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage" if os.environ.get('CLOUDINARY_URL') else "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
