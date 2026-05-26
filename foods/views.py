@@ -33,6 +33,7 @@ def order_food(request, pk):
         order = FoodOrder.objects.create(
             user=request.user,
             restaurant=item.restaurant,
+            ordered_items=f"1x {item.name}",
             total_amount=item.price,
             delivery_name=name,
             delivery_address=address,
@@ -92,10 +93,12 @@ def checkout_cart(request):
         payment_method = request.POST.get('payment_method', 'COD')
         for restaurant, r_items in restaurant_items.items():
             r_total = sum(i.menu_item.price * i.quantity for i in r_items)
+            items_str = ", ".join([f"{i.quantity}x {i.menu_item.name}" for i in r_items])
             total_overall += r_total
             order = FoodOrder.objects.create(
                 user=request.user,
                 restaurant=restaurant,
+                ordered_items=items_str,
                 total_amount=r_total,
                 delivery_name=name,
                 delivery_address=address,

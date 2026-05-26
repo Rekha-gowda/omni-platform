@@ -25,6 +25,7 @@ class FoodOrder(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    ordered_items = models.TextField(blank=True, null=True, help_text="Summary of items ordered")
     delivery_name = models.CharField(max_length=200, blank=True, null=True)
     delivery_address = models.TextField(blank=True, null=True)
     delivery_phone = models.CharField(max_length=20, blank=True, null=True)

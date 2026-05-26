@@ -19,7 +19,7 @@ class FoodComplaintInline(admin.TabularInline):
 
 @admin.register(FoodOrder)
 class FoodOrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'user_email', 'delivery_name', 'delivery_phone', 'restaurant', 'total_amount', 'status', 'created_at')
+    list_display = ('id', 'user', 'user_email', 'restaurant', 'ordered_items', 'total_amount', 'status', 'created_at')
     list_filter = ('status', 'created_at', 'restaurant')
     search_fields = ('id', 'user__username', 'user__email', 'delivery_name', 'delivery_phone')
     inlines = [FoodComplaintInline]
