@@ -55,11 +55,9 @@ class MovieSeat(models.Model):
     lock_expires_at = models.DateTimeField(null=True, blank=True)
 
     def is_locked(self):
-        if self.is_booked:
-            return True
-        if self.lock_expires_at and self.lock_expires_at > timezone.now():
-            return True
-        return False
+        if self.lock_expires_at is not None:
+            return self.lock_expires_at > timezone.now()
+        return self.is_booked
 
     def __str__(self):
         return f"{self.show.movie.title} - {self.seat_identifier}"
